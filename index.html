@@ -113,6 +113,11 @@
         .btn-success { background-color: #10b981; color: white; }
         .btn-success:hover { background-color: #059669; }
 
+        /* 리셋 버튼 전용 상단 여백 추가로 답답함 해소 */
+        .btn-danger {
+            margin-top: 15px;
+        }
+
         .status-box {
             background: #f3e8ff;
             border: 1px solid #d8b4fe;
@@ -131,6 +136,7 @@
             align-items: center;
             width: 100%;
             padding: 10px;
+            overflow-x: auto; /* 모바일에서 좌석이 넘칠 때 가로 스크롤 가능하도록 수정 */
         }
 
         .blackboard {
@@ -143,6 +149,7 @@
             font-weight: 700;
             letter-spacing: 0.1em;
             margin-bottom: 25px;
+            min-width: 250px;
         }
 
         .columns-area {
@@ -151,7 +158,6 @@
             justify-content: center;
             align-items: flex-start;
             gap: 16px;
-            overflow-x: auto;
             padding-bottom: 10px;
         }
 
@@ -223,6 +229,13 @@
 
         .export-group { display: flex; gap: 8px; margin-top: 15px; }
 
+        /* 모바일 대응 버튼 줄바꿈 처리 */
+        @media (max-width: 480px) {
+            .export-group {
+                flex-direction: column;
+            }
+        }
+
         .modal-overlay {
             display: flex;
             position: fixed;
@@ -262,6 +275,12 @@
         .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
         .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: #f8fafc; }
 
+        @media (max-width: 480px) {
+            .modal-footer {
+                flex-direction: column;
+            }
+        }
+
         .student-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
         .student-item { display: flex; align-items: center; gap: 10px; }
         .student-item label { margin: 0; white-space: nowrap; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer; }
@@ -287,6 +306,7 @@
 
         <div class="section-title">3. 배치 및 초기화</div>
         <button class="btn btn-primary" onclick="shuffleSeats()">🔀 조건 반영 자리배치</button>
+        <!-- 리셋 버튼 위쪽에 시각적 간격을 더 넓게 주어 답답함을 없앴습니다 -->
         <button class="btn btn-danger" onclick="resetAll()">🔄 설정 전체 초기화</button>
 
         <div class="export-group">
@@ -532,7 +552,6 @@
         finalGrid = colSeatCounts.map(count => new Array(count).fill(null));
 
         // 3. 앞자리 신청 학생들을 앞쪽 행(Row 0부터 시작) 순서대로 우선 배치
-        // (만약 앞자리 인원이 많다면 2번째 줄, 3번째 줄의 앞쪽부터 차례대로 채워짐)
         let unassignedStudents = [...normalStudents];
         
         frontStudents.forEach(student => {
