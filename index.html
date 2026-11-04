@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트 자리배치 솔루션</title>
+    <!-- HTML을 PDF로 직접 다운로드하기 위한 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-hover: #6d28d9;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --seat-active: #8b5cf6;
+            --seat-hover: #7c3aed;
+            --front-seat-bg: #f3e8ff;
+            --front-seat-border: #c084fc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 850px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #4c1d95;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin: 18px 0 8px 0;
+            text-transform: uppercase;
+        }
+
+        .form-group { margin-bottom: 12px; }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-secondary { background-color: #f1f5f9; color: #475569; border: 1px solid var(--border); }
+        .btn-secondary:hover { background-color: #e2e8f0; }
+        .btn-danger { background-color: #ef4444; color: white; }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn-success { background-color: #10b981; color: white; }
+        .btn-success:hover { background-color: #059669; }
+
+        .status-box {
+            background: #f3e8ff;
+            border: 1px solid #d8b4fe;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.85rem;
+            color: #5b21b6;
+            margin-top: 8px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .classroom-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .blackboard {
+            width: 80%;
+            background: #1e1b4b;
+            color: #f3e8ff;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 25px;
+        }
+
+        .columns-area {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .seat-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .col-header {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .circle-seat-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: var(--seat-active);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+            transition: all 0.2s;
+        }
+
+        .circle-seat-btn:hover {
+            transform: scale(1.08);
+            background: var(--seat-hover);
+        }
+
+        .add-seat-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px dashed #a855f7;
+            background: transparent;
+            color: #a855f7;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: all 0.2s;
+        }
+
+        .add-seat-btn:hover {
+            background: #f3e8ff;
+            transform: scale(1.1);
+        }
+
+        .seat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 6px;
+            width: 90px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .seat-card.front-required {
+            background-color: var(--front-seat-bg);
+            border-color: var(--front-seat-border);
+        }
+
+        .seat-card .name { font-size: 0.9rem; font-weight: 700; color: var(--text-main); }
+        .seat-card .tag { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
+
+        .export-group { display: flex; gap: 8px; margin-top: 15px; }
+
+        .modal-overlay {
+            display: flex;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 480px;
+            max-width: 90%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .modal-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+        .close-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: #f8fafc; }
+
+        .student-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .student-item { display: flex; align-items: center; gap: 10px; }
+        .student-item label { margin: 0; white-space: nowrap; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="panel">
+        <h1>🎯 스마트 자리배치</h1>
+        
+        <div class="section-title">1. 학생 명단 설정</div>
+        <button class="btn btn-secondary" onclick="openModal()">📝 학생 리스트 등록하기</button>
+        <div class="status-box" id="statusBox">
+            등록된 학생: <b>0명</b>
+        </div>
+
+        <div class="section-title">2. 교실 모양 (세로줄 수)</div>
+        <div class="form-group">
+            <label>세로줄(열) 개수</label>
+            <input type="number" id="totalCols" value="6" min="1" max="10" onchange="initLayoutFromInput()">
+        </div>
+
+        <div class="section-title">3. 배치 및 초기화</div>
+        <button class="btn btn-primary" onclick="shuffleSeats()">🔀 조건 반영 자리배치</button>
+        <button class="btn btn-danger" onclick="resetAll()">🔄 설정 전체 초기화</button>
+
+        <div class="export-group">
+            <button class="btn btn-secondary" onclick="exportPDF()">PDF 다운로드</button>
+            <button class="btn btn-success" onclick="exportWord()">📝 HWP/Word 다운로드</button>
+        </div>
+    </div>
+
+    <div class="panel" id="printArea">
+        <div class="classroom-container">
+            <div class="blackboard">칠 판 (FRONT)</div>
+            <div class="columns-area" id="columnsArea"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 모달 창 -->
+<div class="modal-overlay" id="studentModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📝 학생 명단 입력</h2>
+            <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>전체 학생 인원수(n명)</label>
+                <input type="number" id="modalStudentCount" value="32" min="1" max="60" oninput="generateModalInputs()" onchange="generateModalInputs()">
+            </div>
+            
+            <div class="student-grid" id="modalStudentInputs"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="loadSampleDataInModal()">샘플 채우기</button>
+            <button class="btn btn-primary" onclick="saveStudentsFromModal()">저장하고 자리 배치</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let registeredStudents = [];
+    let colSeatCounts = [6, 6, 5, 5, 5, 5]; // 기본 6열 (6/6/5/5/5/5)
+    let isArranged = false;
+    let finalGrid = [];
+
+    window.onload = function() {
+        openModal();
+        generateModalInputs();
+    };
+
+    function openModal() {
+        document.getElementById('studentModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('studentModal').style.display = 'none';
+    }
+
+    function generateModalInputs() {
+        const count = parseInt(document.getElementById('modalStudentCount').value) || 0;
+        const container = document.getElementById('modalStudentInputs');
+        
+        const currentInputs = document.querySelectorAll('.modal-name-input');
+        const currentFronts = document.querySelectorAll('.modal-front-checkbox');
+        let tempStudents = [];
+
+        currentInputs.forEach((input, idx) => {
+            tempStudents.push({
+                rawName: input.value,
+                isFront: currentFronts[idx] ? currentFronts[idx].checked : false
+            });
+        });
+
+        container.innerHTML = '';
+
+        for (let i = 1; i <= count; i++) {
+            const existing = tempStudents[i - 1] || registeredStudents[i - 1];
+            const div = document.createElement('div');
+            div.className = 'student-item';
+            div.innerHTML = `
+                <span style="min-width: 35px; font-weight: bold; font-size:0.85rem;">${i}번</span>
+                <input type="text" class="modal-name-input" placeholder="${i}번 (미입력 시 번호)" value="${existing ? (existing.rawName || '') : ''}">
+                <label><input type="checkbox" class="modal-front-checkbox" ${existing && existing.isFront ? 'checked' : ''}> 앞자리</label>
+            `;
+            container.appendChild(div);
+        }
+    }
+
+    function loadSampleDataInModal() {
+        const count = parseInt(document.getElementById('modalStudentCount').value) || 0;
+        
+        const sampleNames = [
+            "김민수", "박지영", "김도윤", "서서윤", "이지호", "한서준", "오예준", "강지우", 
+            "조하은", "윤지호", "임서아", "한주원", "오지안", "서지호", "신예은", "권민준", 
+            "황서현", "송도윤", "배서진", "유은우", "정하은", "강민준", "이서준", "조도윤", 
+            "한예은", "윤서진", "임도현", "송지아", "배하준", "유서윤", "권태현", "황지민",
+            "최현우", "송민지", "임재범", "윤시아", "장동건", "고소영", "정우성", "이정재"
+        ];
+
+        const nameInputs = document.querySelectorAll('.modal-name-input');
+        const frontCheckboxes = document.querySelectorAll('.modal-front-checkbox');
+
+        for (let idx = 0; idx < count; idx++) {
+            if (nameInputs[idx]) {
+                nameInputs[idx].value = sampleNames[idx % sampleNames.length];
+                if (idx < 4) frontCheckboxes[idx].checked = true;
+            }
+        }
+    }
+
+    function saveStudentsFromModal() {
+        const nameInputs = document.querySelectorAll('.modal-name-input');
+        const frontCheckboxes = document.querySelectorAll('.modal-front-checkbox');
+        let list = [];
+
+        nameInputs.forEach((input, idx) => {
+            const rawName = input.value.trim();
+            const displayName = rawName !== '' ? rawName : `${idx + 1}번`;
+            const isFront = frontCheckboxes[idx].checked;
+
+            list.push({ rawName, name: displayName, isFront });
+        });
+
+        registeredStudents = list;
+        isArranged = false;
+        closeModal();
+        renderSeats();
+        updateStatus();
+    }
+
+    function updateStatus() {
+        const frontCount = registeredStudents.filter(s => s.isFront).length;
+        const totalSeats = colSeatCounts.reduce((a, b) => a + b, 0);
+        const studentCount = registeredStudents.length;
+
+        let statusText = `등록 학생: <b>${studentCount}명</b> (앞자리: ${frontCount}명)<br>`;
+        if (totalSeats === studentCount) {
+            statusText += `<span style="color:#10b981;">좌석 수(${totalSeats}석)와 학생 수가 일치합니다.</span>`;
+        } else if (totalSeats > studentCount) {
+            statusText += `<span style="color:#f59e0b;">좌석(${totalSeats}석)이 ${totalSeats - studentCount}개 남습니다.</span>`;
+        } else {
+            statusText += `<span style="color:#ef4444;">⚠️ 좌석(${totalSeats}석)이 ${studentCount - totalSeats}개 부족합니다!</span>`;
+        }
+
+        document.getElementById('statusBox').innerHTML = statusText;
+    }
+
+    function initLayoutFromInput() {
+        const totalCols = parseInt(document.getElementById('totalCols').value) || 1;
+        while (colSeatCounts.length < totalCols) colSeatCounts.push(5);
+        while (colSeatCounts.length > totalCols) colSeatCounts.pop();
+        isArranged = false;
+        renderSeats();
+        updateStatus();
+    }
+
+    function renderSeats() {
+        const columnsArea = document.getElementById('columnsArea');
+        columnsArea.innerHTML = '';
+
+        if (isArranged) {
+            renderFinalSeating();
+            return;
+        }
+
+        colSeatCounts.forEach((count, cIdx) => {
+            const colDiv = document.createElement('div');
+            colDiv.className = 'seat-column';
+
+            const header = document.createElement('div');
+            header.className = 'col-header';
+            header.innerText = `${cIdx + 1}열 (${count}석)`;
+            colDiv.appendChild(header);
+
+            for (let r = 0; r < count; r++) {
+                const btn = document.createElement('button');
+                btn.className = 'circle-seat-btn';
+                btn.title = '클릭하여 해당 좌석 삭제';
+                btn.onclick = () => removeSeat(cIdx);
+                colDiv.appendChild(btn);
+            }
+
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-seat-btn';
+            addBtn.innerText = '+';
+            addBtn.title = '좌석 추가';
+            addBtn.onclick = () => addSeat(cIdx);
+            colDiv.appendChild(addBtn);
+
+            columnsArea.appendChild(colDiv);
+        });
+    }
+
+    function addSeat(colIndex) {
+        colSeatCounts[colIndex]++;
+        isArranged = false;
+        renderSeats();
+        updateStatus();
+    }
+
+    function removeSeat(colIndex) {
+        if (colSeatCounts[colIndex] > 0) {
+            colSeatCounts[colIndex]--;
+            isArranged = false;
+            renderSeats();
+            updateStatus();
+        }
+    }
+
+    // 행(Row) 단위로 앞줄부터 차례대로 채우는 스마트 배치 로직
+    function shuffleSeats() {
+        if (registeredStudents.length === 0) {
+            openModal();
+            return;
+        }
+
+        // 1. 행별로 좌석 풀 생성 및 내부 무작위 셔플
+        let rowsMap = {};
+        colSeatCounts.forEach((count, colIdx) => {
+            for (let rowIdx = 0; rowIdx < count; rowIdx++) {
+                if (!rowsMap[rowIdx]) rowsMap[rowIdx] = [];
+                rowsMap[rowIdx].push({ col: colIdx, row: rowIdx });
+            }
+        });
+
+        // 각 행(row) 안에서는 무작위로 섞기
+        Object.keys(rowsMap).forEach(rowIdx => {
+            rowsMap[rowIdx].sort(() => Math.random() - 0.5);
+        });
+
+        // 행 순서대로(0행 -> 1행 -> 2행...) 전체 좌석 풀 정렬
+        let orderedSeats = [];
+        let maxRow = Math.max(...Object.keys(rowsMap).map(Number));
+        for (let r = 0; r <= maxRow; r++) {
+            if (rowsMap[r]) {
+                orderedSeats.push(...rowsMap[r]);
+            }
+        }
+
+        // 2. 학생 그룹 분리 및 셔플
+        const frontStudents = registeredStudents.filter(s => s.isFront).sort(() => Math.random() - 0.5);
+        const normalStudents = registeredStudents.filter(s => !s.isFront).sort(() => Math.random() - 0.5);
+
+        finalGrid = colSeatCounts.map(count => new Array(count).fill(null));
+
+        // 3. 앞자리 신청 학생들을 앞쪽 행(Row 0부터 시작) 순서대로 우선 배치
+        // (만약 앞자리 인원이 많다면 2번째 줄, 3번째 줄의 앞쪽부터 차례대로 채워짐)
+        let unassignedStudents = [...normalStudents];
+        
+        frontStudents.forEach(student => {
+            if (orderedSeats.length > 0) {
+                const seat = orderedSeats.shift(); // 맨 앞쪽 좌석부터 배정
+                finalGrid[seat.col][seat.row] = student;
+            } else {
+                unassignedStudents.push(student);
+            }
+        });
+
+        // 4. 일반 학생들을 남은 좌석에 배치
+        unassignedStudents.sort(() => Math.random() - 0.5);
+        unassignedStudents.forEach(student => {
+            if (orderedSeats.length > 0) {
+                const seat = orderedSeats.shift();
+                finalGrid[seat.col][seat.row] = student;
+            }
+        });
+
+        isArranged = true;
+        renderSeats();
+    }
+
+    function renderFinalSeating() {
+        const columnsArea = document.getElementById('columnsArea');
+        columnsArea.innerHTML = '';
+
+        colSeatCounts.forEach((count, cIdx) => {
+            const colDiv = document.createElement('div');
+            colDiv.className = 'seat-column';
+
+            const header = document.createElement('div');
+            header.className = 'col-header';
+            header.innerText = `${cIdx + 1}열 (${count}석)`;
+            colDiv.appendChild(header);
+
+            for (let r = 0; r < count; r++) {
+                const card = document.createElement('div');
+                const st = finalGrid[cIdx] ? finalGrid[cIdx][r] : null;
+
+                if (st) {
+                    card.className = `seat-card ${st.isFront ? 'front-required' : ''}`;
+                    card.innerHTML = `
+                        <div class="name">${st.name}</div>
+                        <div class="tag">${st.isFront ? '👓 앞자리' : '일반석'}</div>
+                    `;
+                } else {
+                    card.className = 'seat-card';
+                    card.style.opacity = '0.3';
+                    card.innerHTML = `<div class="name" style="color:#aaa;">빈자리</div>`;
+                }
+                colDiv.appendChild(card);
+            }
+            columnsArea.appendChild(colDiv);
+        });
+    }
+
+    function resetAll() {
+        if (confirm("전체 설정을 초기화하시겠습니까?")) {
+            registeredStudents = [];
+            colSeatCounts = [6, 6, 5, 5, 5, 5];
+            isArranged = false;
+            finalGrid = [];
+            document.getElementById('totalCols').value = 6;
+            document.getElementById('modalStudentCount').value = 32;
+            renderSeats();
+            openModal();
+            generateModalInputs();
+        }
+    }
+
+    function exportPDF() {
+        const element = document.getElementById('printArea');
+        const opt = {
+            margin:       10,
+            filename:     '학급_자리배치표.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        };
+
+        html2pdf().set(opt).from(element).save();
+    }
+
+    function exportWord() {
+        const maxRows = Math.max(...colSeatCounts, 1);
+        const totalCols = colSeatCounts.length;
+
+        let columnsData = [];
+        colSeatCounts.forEach((count, cIdx) => {
+            let colList = [];
+            for(let r = 0; r < count; r++) {
+                const st = finalGrid[cIdx] ? finalGrid[cIdx][r] : null;
+                if (st) {
+                    colList.push(st);
+                } else {
+                    colList.push({ name: '빈자리', isFront: false });
+                }
+            }
+            columnsData.push(colList);
+        });
+
+        let tableHtml = `<table border="1" style="border-collapse:collapse; width:100%; text-align:center; font-family:맑은 고딕;">`;
+        tableHtml += `<tr><th colspan="${totalCols}" style="background:#1e1b4b; color:#fff; padding:10px;">칠 판 (FRONT)</th></tr>`;
+
+        for (let r = 0; r < maxRows; r++) {
+            tableHtml += `<tr>`;
+            for (let c = 0; c < totalCols; c++) {
+                if (r < columnsData[c].length) {
+                    const st = columnsData[c][r];
+                    tableHtml += `<td style="padding:12px 5px; width:100px;"><b>${st.name}</b><br><font size="2" color="#666">${st.isFront ? '👓 앞자리' : ''}</font></td>`;
+                } else {
+                    tableHtml += `<td style="background:#f9f9f9; color:#ccc;">-</td>`;
+                }
+            }
+            tableHtml += `</tr>`;
+        }
+        tableHtml += `</table>`;
+
+        const htmlContainer = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><meta charset='utf-8'><title>자리배치표</title></head>
+            <body><h2>🏫 학급 자리배치표</h2>${tableHtml}</body>
+            </html>
+        `;
+
+        const blob = new Blob(['\ufeff' + htmlContainer], { type: 'application/msword' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '학급_자리배치표.doc';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>
