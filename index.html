@@ -577,7 +577,7 @@
                     card.className = `seat-card ${st.isFront ? 'front-required' : ''}`;
                     card.innerHTML = `
                         <div class="name">${st.name}</div>
-                        <div class="tag">${st.isFront ? '👓 앞자리' : ''}</div>
+                        <div class="tag">${st.isFront ? '' : ''}</div>
                     `;
                 } else {
                     card.className = 'seat-card';
