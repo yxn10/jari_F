@@ -4,7 +4,7 @@
     <link rel="icon" href="data:,">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스마트 학급 관리 시스템</title>
+    <title>1학년 10반 스마트 학급 관리 시스템</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
@@ -56,11 +56,6 @@
         .menu-card h2 { font-size: 1.1rem; color: #f2f3f5; margin-bottom: 6px; }
         .menu-card p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
         
-        .roster-manage-btn {
-            background: #35373c; border: 1px solid #4e5058; color: #dbdee1; width: 100%; padding: 12px;
-            border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
-        }
-        .roster-manage-btn:hover { background: #404249; color: white; }
         .sub-nav { max-width: 1200px; margin: 0 auto 15px auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .back-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; color: #dbdee1; font-size: 0.85rem; }
         .back-btn:hover { background: #35373c; color: white; }
@@ -103,11 +98,6 @@
         .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: #313338; }
         .student-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
         .student-item { display: flex; align-items: center; gap: 8px; }
-        
-        .group-result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 12px; }
-        .group-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
-        .group-box h3 { font-size: 0.95rem; color: var(--primary); margin-bottom: 6px; border-bottom: 2px solid var(--border); padding-bottom: 3px; }
-        .group-member { font-size: 0.85rem; padding: 3px 0; color: #dbdee1; }
 
         /* 관리자 선택 삭제 바 */
         .admin-bulk-bar { display: none; justify-content: space-between; align-items: center; background: #1e1f22; border: 1px solid #da373c; border-radius: 8px; padding: 8px 14px; margin-bottom: 12px; }
@@ -124,18 +114,26 @@
         .notice-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 0.9rem; color: #dbdee1; word-break: break-all; }
         .notice-body.show { display: block; }
 
-        .board-post-row { display: flex; gap: 12px; align-items: flex-start; background: #1e1f22; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; text-align: left; }
-        .board-avatar { width: 38px; height: 38px; border-radius: 50%; background-color: #248046; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
-        .board-content-wrapper { flex: 1; }
-        .board-content-area { cursor: pointer; }
-        .board-meta { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
-        .board-meta-left { display: flex; align-items: baseline; gap: 8px; }
-        .board-author { font-weight: 600; color: #f2f3f5; font-size: 0.95rem; }
-        .board-time { font-size: 0.75rem; color: var(--text-muted); }
-        .board-title-text { font-weight: 700; color: #dbdee1; font-size: 0.95rem; margin-bottom: 4px; }
-        .board-body-text { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); font-size: 0.9rem; color: #b5bac1; word-break: break-all; }
-        .board-body-text.show { display: block; }
-        .post-media { margin-top: 8px; max-width: 100%; border-radius: 6px; }
+        /* 디시인사이드 스타일 갤러리 테이블 디자인 */
+        .dc-table { width: 100%; border-collapse: collapse; background: #1e1f22; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); text-align: left; font-size: 0.9rem; }
+        .dc-table th { background: #2b2d31; color: var(--text-muted); font-size: 0.8rem; font-weight: 700; padding: 10px 12px; border-bottom: 2px solid var(--border); }
+        .dc-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: #dbdee1; vertical-align: middle; }
+        .dc-table tr:hover { background: #25262b; }
+        .dc-num { width: 50px; text-align: center; color: var(--text-muted); font-size: 0.8rem; }
+        .dc-title-cell { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .dc-title-text { font-weight: 600; color: #f2f3f5; }
+        .dc-title-text:hover { color: var(--primary); text-decoration: underline; }
+        .dc-author { width: 100px; color: #b5bac1; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dc-time { width: 80px; color: var(--text-muted); font-size: 0.75rem; text-align: center; }
+        .media-marker { font-size: 0.8rem; background: #35373c; padding: 2px 6px; border-radius: 4px; color: var(--primary); font-weight: 700; }
+
+        .post-detail-view { display: none; background: #1e1f22; border: 1px solid var(--border); border-radius: 10px; padding: 20px; text-align: left; }
+        .post-detail-view.show { display: block; }
+        .post-detail-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 15px; }
+        .post-detail-title { font-size: 1.2rem; font-weight: 700; color: #f2f3f5; margin-bottom: 6px; }
+        .post-detail-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 15px; }
+        .post-detail-body { font-size: 0.95rem; color: #dbdee1; line-height: 1.5; word-break: break-all; margin-bottom: 20px; white-space: pre-wrap; }
+        .post-media { margin-top: 12px; max-width: 100%; border-radius: 8px; }
 
         .discord-chat-container { display: flex; flex-direction: column; height: 500px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
         .discord-chat-header { padding: 12px 18px; background: #2b2d31; border-bottom: 1px solid var(--border); font-weight: 700; color: #f2f3f5; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
@@ -204,27 +202,20 @@
         <p>원하시는 학급 도구를 선택해주세요.</p>
         <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
             <button class="btn btn-primary" style="padding: 16px; font-size: 1rem;" onclick="switchPage('seatPage')">🎯 자리 배치 시스템</button>
-            <button class="btn btn-secondary" style="padding: 16px; font-size: 1rem;" onclick="switchPage('groupPage')">👥 무작위 모둠 편성</button>
         </div>
     </div>
 </div>
 
 <div id="dashboardPage" class="page-view">
     <div class="dashboard-container">
-        <h1 id="dashboardTitleText">🏫 스마트 학급 관리 시스템</h1>
-        <p>학생 명단을 관리하고 다양한 학급 운영 도구를 이용하세요.</p>
-        
-        <div style="margin-bottom: 20px;">
-            <button class="roster-manage-btn" onclick="openModal()">📝 학생 명단 리스트 등록하기</button>
-            <div id="lobbyStatus" style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">등록된 학생: <b>0명</b></div>
-        </div>
+        <h1 id="dashboardTitleText">🏫 학급 관리 시스템</h1>
+        <p>다양한 학급 운영 도구를 이용하세요.</p>
 
         <div class="menu-cards">
-            <div class="menu-card" onclick="switchPage('seatPage')"><h2>🎯 자리 배치 시스템</h2><p>앞자리 우선 배정 및 파일 다운로드</p></div>
-            <div class="menu-card" onclick="switchPage('groupPage')"><h2>👥 무작위 모둠 편성</h2><p>공정한 무작위 조 편성</p></div>
-            <div class="menu-card" onclick="switchPage('noticePage')"><h2>📌 학급 공지사항</h2><p>선생님(관리자) 전용 공지 게시판</p></div>
-            <div class="menu-card" onclick="switchPage('boardPage')"><h2>💬 자유 게시판</h2><p>사진, 동영상 첨부가 가능한 자유 소통 공간</p></div>
-            <div class="menu-card" onclick="switchPage('chatPage')"><h2 id="chatMenuTitle">💬 실시간 소통방</h2><p>디스코드 감성 실시간 메신저</p></div>
+            <div class="menu-card" onclick="switchPage('seatPage')"><h2>🎯 자리 배치 시스템</h2><p></p></div>
+            <div class="menu-card" onclick="switchPage('noticePage')"><h2>📌 공지사항</h2><p>관리자 전용 공지 게시판</p></div>
+            <div class="menu-card" onclick="switchPage('boardPage')"><h2>💬 게시판</h2><p>유저 전용 게시판</p></div>
+            <div class="menu-card" onclick="switchPage('chatPage')"><h2 id="chatMenuTitle">💬 채팅방</h2><p>실시간 메신저</p></div>
         </div>
     </div>
 </div>
@@ -253,28 +244,6 @@
                 <div class="blackboard">칠 판 (FRONT)</div>
                 <div class="columns-area" id="columnsArea"></div>
             </div>
-        </div>
-    </div>
-</div>
-
-<div id="groupPage" class="page-view">
-    <div class="sub-nav">
-        <button class="back-btn" onclick="goBackFromSeat()">← 돌아가기</button>
-        <h2 style="font-size: 1.1rem; color:#f2f3f5; margin:0;">👥 무작위 모둠 편성</h2>
-        <div></div>
-    </div>
-    <div class="container" style="grid-template-columns: 280px 1fr;">
-        <div class="panel">
-            <div class="status-box" id="groupStatusBox" style="margin-bottom: 12px;">등록된 학생: <b>0명</b></div>
-            <div class="form-group">
-                <label>모둠당 인원수 설정</label>
-                <input type="number" id="groupSizeInput" value="4" min="2" max="10" oninput="updateGroupPreview()" onchange="updateGroupPreview()">
-            </div>
-            <div id="groupCalcPreview" style="font-size: 0.8rem; color: #b5bac1; margin-bottom: 12px; line-height: 1.4;"></div>
-            <button class="btn btn-primary" onclick="generateGroups()">🎲 모둠 무작위 섞기</button>
-        </div>
-        <div class="panel">
-            <div id="groupResultArea" style="color: var(--text-muted); text-align: center; padding: 30px;">모둠을 편성해주세요.</div>
         </div>
     </div>
 </div>
@@ -308,12 +277,11 @@
 <div id="boardPage" class="page-view">
     <div class="sub-nav">
         <button class="back-btn" onclick="switchPage('dashboardPage')">← 로비로</button>
-        <h2 style="font-size: 1.1rem; color:#f2f3f5; margin:0;">💬 자유 게시판</h2>
-        <button class="btn btn-primary" onclick="openBoardModal()" style="width: auto; padding: 8px 16px; margin:0; font-size: 0.85rem;">✍️ 새 글 작성하기</button>
+        <h2 style="font-size: 1.1rem; color:#f2f3f5; margin:0;" id="boardHeaderTitle">💬 1학년 10반 자유 갤러리</h2>
+        <button class="btn btn-primary" onclick="openBoardModal()" style="width: auto; padding: 8px 16px; margin:0; font-size: 0.85rem;">✍️ 글쓰기</button>
     </div>
-    <div class="container" style="max-width: 800px; grid-template-columns: 1fr;">
-        <div class="panel">
-            <h3 style="margin-bottom: 12px; font-size: 1rem; color: #f2f3f5;">실시간 자유 소통 목록 (클릭 시 본문 확인)</h3>
+    <div class="container" style="max-width: 900px; grid-template-columns: 1fr;">
+        <div class="panel" id="boardListView">
             <div id="boardBulkBar" class="admin-bulk-bar">
                 <label class="admin-bulk-left" style="margin:0; cursor:pointer;">
                     <input type="checkbox" class="admin-chk" id="boardSelectAll" onchange="toggleAllCheckboxes('board-chk', this.checked)"> 전체 선택
@@ -322,12 +290,29 @@
             </div>
             <div id="boardListArea"><div style="color: var(--text-muted); text-align: center; padding: 20px;">작성된 게시글이 없습니다.</div></div>
         </div>
+        
+        <div class="post-detail-view" id="postDetailView">
+            <div class="post-detail-header">
+                <div class="post-detail-title" id="detailTitle">제목 영역</div>
+                <div class="post-detail-meta">
+                    <span>글쓴이: <b id="detailAuthor">작성자</b></span>
+                    <span>작성일시: <span id="detailTime">시간</span></span>
+                    <span>조회수: <span id="detailViews">0</span></span>
+                </div>
+            </div>
+            <div class="post-detail-body" id="detailBody">본문 내용 영역</div>
+            <div id="detailMediaArea"></div>
+            <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+                <button class="btn btn-secondary" onclick="closePostDetail()" style="width: auto; padding: 8px 16px;">← 목록으로</button>
+                <button class="btn btn-danger" id="detailDeleteBtn" onclick="" style="width: auto; padding: 8px 16px; display:none;">삭제하기</button>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="modal-overlay" id="boardModal">
     <div class="modal-content">
-        <div class="modal-header"><h2>✍️ 자유 게시판 글 작성</h2><button class="close-btn" onclick="closeBoardModal()">✕</button></div>
+        <div class="modal-header"><h2>✍️ 디시 갤러리 글 작성</h2><button class="close-btn" onclick="closeBoardModal()">✕</button></div>
         <div class="modal-body">
             <div class="form-group"><label>제목</label><input type="text" id="boardTitle" placeholder="제목을 입력하세요"></div>
             <div class="form-group"><label>내용</label><textarea id="boardContent" rows="4" placeholder="내용을 입력하세요"></textarea></div>
@@ -346,7 +331,7 @@
     <div style="max-width: 800px; margin: 0 auto;">
         <div class="discord-chat-container">
             <div class="discord-chat-header">
-                <span id="discordChatHeaderDesc">💬 실시간 메신저 (실시간 영구 저장)</span>
+                <span id="discordChatHeaderDesc">💬 실시간 메신저</span>
                 <div id="chatBulkBar" style="display: none; align-items: center; gap: 10px;">
                     <label style="display:flex; align-items:center; gap:5px; margin:0; font-size:0.8rem; color:#dbdee1; cursor:pointer;">
                         <input type="checkbox" class="admin-chk" id="chatSelectAll" onchange="toggleAllCheckboxes('chat-chk', this.checked)"> 전체 선택
@@ -380,7 +365,7 @@
     import { getDatabase, ref, push, set, remove, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const CONFIG = {
-        className: "1학년 10반(TEST)",
+        className: "1학년 10반",
         adminPassword: "rhksflwk1234",
         defaultPassword: "1234",
         sampleNames: ["이윤성", "권순우", "김승우", "김지오", "김지훈", "김한울", "남현민", "문제현", "박동환", "박정인", "백민재", "신민우", "오범서", "오준서", "유현규", "윤여진", "윤정빈", "이규민", "이민하", "이주호", "이준우", "이하진", "이한율", "이호진", "임수현", "장재원", "조준현", "채윤석", "최다헌", "한서윤", "정하준", "정시훈"]
@@ -392,6 +377,7 @@
     document.getElementById('chatMenuTitle').innerText = `💬 ${CONFIG.className} 실시간 소통방`;
     document.getElementById('chatHeaderTitle').innerText = `💬 ${CONFIG.className} 실시간 소통방`;
     document.getElementById('discordChatHeaderDesc').innerText = `💬 ${CONFIG.className} 실시간 메신저`;
+    document.getElementById('boardHeaderTitle').innerText = `💬 ${CONFIG.className} 자유 갤러리`;
 
     const firebaseConfig = {
         databaseURL: "https://jeongbobalpio-default-rtdb.firebaseio.com/",
@@ -399,7 +385,6 @@
     };
     const db = getDatabase(initializeApp(firebaseConfig));
 
-    // 욕설 필터링 리스트
     const profanityList = ["시발", "씨발", "ㅅㅂ", "ㅆㅂ", "새끼", "병신", "ㅂㅅ", "지랄", "ㅈㄹ", "꺼져", "닥쳐", "개새", "미친", "존나", "ㅈㄴ", "창녀", "창놈", "애미", "애비"];
     window.filterProfanity = function(text) {
         if (!text) return text;
@@ -415,7 +400,6 @@
     let cachedBoardPosts = null;
     let cachedChatMessages = null;
 
-    // Firebase 사용자 비밀번호 동기화
     window.firebaseUsers = {};
     onValue(ref(db, 'users'), (snapshot) => {
         window.firebaseUsers = snapshot.val() || {};
@@ -426,7 +410,6 @@
         return set(ref(db, 'users/' + userId), { pw: newPw, isChanged: true });
     };
 
-    // 다중 선택 일괄 삭제 공통 로직
     window.toggleAllCheckboxes = function(className, isChecked) {
         document.querySelectorAll('.' + className).forEach(chk => {
             chk.checked = isChecked;
@@ -453,7 +436,6 @@
         }
     };
 
-    // 공지사항
     window.uploadNotice = function() {
         const title = window.filterProfanity(document.getElementById('noticeTitle').value.trim());
         const content = window.filterProfanity(document.getElementById('noticeContent').value.trim());
@@ -503,7 +485,6 @@
         window.renderNoticesList();
     });
 
-    // 자유 게시판
     window.uploadBoardPost = function() {
         const title = window.filterProfanity(document.getElementById('boardTitle').value.trim());
         const content = window.filterProfanity(document.getElementById('boardContent').value.trim());
@@ -522,7 +503,7 @@
     };
 
     function saveBoardData(author, title, content, fileData, fileType, fileName) {
-        set(push(ref(db, 'boardPosts')), { author, title, content, fileData, fileType, fileName, time: Date.now() });
+        set(push(ref(db, 'boardPosts')), { author, title, content, fileData, fileType, fileName, views: 0, time: Date.now() });
         document.getElementById('boardTitle').value = "";
         document.getElementById('boardContent').value = "";
         document.getElementById('boardFile').value = "";
@@ -530,16 +511,60 @@
         alert("게시글이 등록되었습니다.");
     }
 
-    window.deleteBoardPost = function(key, author) {
+    window.deleteBoardPost = function(key) {
+        if(confirm("정말 이 게시글을 삭제하시겠습니까?")) {
+            remove(ref(db, 'boardPosts/' + key)).then(() => {
+                closePostDetail();
+                alert("삭제되었습니다.");
+            });
+        }
+    };
+
+    window.openPostDetail = function(key) {
+        if(!cachedBoardPosts || !cachedBoardPosts[key]) return;
+        const p = cachedBoardPosts[key];
+        
+        // 조회수 증가
+        const newViews = (p.views || 0) + 1;
+        update(ref(db, 'boardPosts/' + key), { views: newViews });
+
+        document.getElementById('detailTitle').innerText = p.title;
+        document.getElementById('detailAuthor').innerText = p.author;
+        document.getElementById('detailTime').innerText = new Date(p.time).toLocaleString();
+        document.getElementById('detailViews').innerText = newViews;
+        document.getElementById('detailBody').innerText = p.content;
+
+        const mediaArea = document.getElementById('detailMediaArea');
+        mediaArea.innerHTML = '';
+        if(p.fileData) {
+            if(p.fileType && p.fileType.startsWith('image/')) {
+                mediaArea.innerHTML = `<img src="${p.fileData}" class="post-media" alt="첨부 이미지">`;
+            } else if(p.fileType && p.fileType.startsWith('video/')) {
+                mediaArea.innerHTML = `<video src="${p.fileData}" controls class="post-media"></video>`;
+            } else {
+                mediaArea.innerHTML = `<div style="margin-top:12px;"><a href="${p.fileData}" download="${p.fileName}" style="color:var(--primary); font-weight:600;">📎 첨부파일 다운로드: ${p.fileName}</a></div>`;
+            }
+        }
+
         const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
         const isAdmin = currentUserObj && currentUserObj.id === '관리자';
-        const isAuthor = currentUserObj && currentUserObj.name === author;
+        const isAuthor = currentUserObj && currentUserObj.name === p.author;
+        const deleteBtn = document.getElementById('detailDeleteBtn');
 
         if(isAdmin || isAuthor) {
-            if(confirm("정말 이 게시글을 삭제하시겠습니까?")) {
-                remove(ref(db, 'boardPosts/' + key)).then(() => alert("삭제되었습니다."));
-            }
-        } else { alert("삭제 권한이 없습니다."); }
+            deleteBtn.style.display = 'inline-block';
+            deleteBtn.setAttribute('onclick', `deleteBoardPost('${key}')`);
+        } else {
+            deleteBtn.style.display = 'none';
+        }
+
+        document.getElementById('boardListView').style.display = 'none';
+        document.getElementById('postDetailView').classList.add('show');
+    };
+
+    window.closePostDetail = function() {
+        document.getElementById('postDetailView').classList.remove('show');
+        document.getElementById('boardListView').style.display = 'block';
     };
 
     window.renderBoardList = function() {
@@ -551,36 +576,57 @@
         const isAdmin = currentUserObj && currentUserObj.id === '관리자';
         if (bulkBar) bulkBar.style.display = (isAdmin && cachedBoardPosts) ? 'flex' : 'none';
 
-        if(!cachedBoardPosts) { container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">작성된 게시글이 없습니다.</div>`; return; }
+        if(!cachedBoardPosts) {
+            container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">작성된 게시글이 없습니다.</div>`;
+            return;
+        }
 
-        container.innerHTML = Object.entries(cachedBoardPosts).reverse().map(([key, p]) => {
+        const entries = Object.entries(cachedBoardPosts).reverse();
+        let tableHtml = `
+            <table class="dc-table">
+                <thead>
+                    <tr>
+                        ${isAdmin ? '<th style="width:30px;"></th>' : ''}
+                        <th class="dc-num">번호</th>
+                        <th>제목</th>
+                        <th class="dc-author">글쓴이</th>
+                        <th class="dc-time">작성일시</th>
+                        <th class="dc-num">조회</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        entries.forEach(([key, p], index) => {
+            const postNum = entries.length - index;
             const timeStr = new Date(p.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const initial = p.author ? p.author.charAt(0) : '?';
-            const canDelete = isAdmin || (currentUserObj && currentUserObj.name === p.author);
-
-            let mediaHtml = '';
+            
+            let mediaMarker = '';
             if(p.fileData) {
-                if(p.fileType && p.fileType.startsWith('image/')) mediaHtml = `<img src="${p.fileData}" class="post-media" alt="첨부 이미지">`;
-                else if(p.fileType && p.fileType.startsWith('video/')) mediaHtml = `<video src="${p.fileData}" controls class="post-media"></video>`;
-                else mediaHtml = `<div style="margin-top:8px;"><a href="${p.fileData}" download="${p.fileName}" style="color:var(--primary); font-weight:600;">📎 첨부파일 다운로드: ${p.fileName}</a></div>`;
+                if(p.fileType && p.fileType.startsWith('image/')) mediaMarker = `<span class="media-marker">🖼️ 이미지</span>`;
+                else if(p.fileType && p.fileType.startsWith('video/')) mediaMarker = `<span class="media-marker">🎬 영상</span>`;
+                else mediaMarker = `<span class="media-marker">📎 파일</span>`;
             }
-            return `
-                <div class="board-post-row">
-                    ${isAdmin ? `<input type="checkbox" class="admin-chk board-chk" value="${key}" style="margin-top:10px;">` : ''}
-                    <div class="board-avatar">${initial}</div>
-                    <div class="board-content-wrapper">
-                        <div class="board-meta">
-                            <div class="board-meta-left"><span class="board-author">${p.author}</span><span class="board-time">${timeStr}</span></div>
-                            ${canDelete ? `<button class="delete-btn-small" onclick="deleteBoardPost('${key}', '${p.author}')">삭제</button>` : ''}
+
+            tableHtml += `
+                <tr>
+                    ${isAdmin ? `<td><input type="checkbox" class="admin-chk board-chk" value="${key}"></td>` : ''}
+                    <td class="dc-num">${postNum}</td>
+                    <td>
+                        <div class="dc-title-cell" onclick="openPostDetail('${key}')">
+                            <span class="dc-title-text">${p.title}</span>
+                            ${mediaMarker}
                         </div>
-                        <div class="board-content-area" onclick="toggleBoard(this)">
-                            <div class="board-title-text">${p.title}</div>
-                            <div class="board-body-text"><p style="white-space: pre-wrap; margin-bottom: 8px;">${p.content}</p>${mediaHtml}</div>
-                        </div>
-                    </div>
-                </div>
+                    </td>
+                    <td class="dc-author">${p.author}</td>
+                    <td class="dc-time">${timeStr}</td>
+                    <td class="dc-num">${p.views || 0}</td>
+                </tr>
             `;
-        }).join('');
+        });
+
+        tableHtml += `</tbody></table>`;
+        container.innerHTML = tableHtml;
     };
 
     onValue(ref(db, 'boardPosts'), (snapshot) => {
@@ -588,7 +634,6 @@
         window.renderBoardList();
     });
 
-    // 실시간 채팅
     window.sendDiscordMessage = function() {
         const rawText = document.getElementById('discordChatInput').value.trim();
         if(!rawText) return;
@@ -641,7 +686,6 @@
         window.renderChatMessages();
     });
 
-    // 계정 전환 시 모든 리스트 강제 리렌더링 함수
     window.refreshAllUI = function() {
         if (window.renderNoticesList) window.renderNoticesList();
         if (window.renderBoardList) window.renderBoardList();
@@ -656,11 +700,11 @@
         sampleNames: ["이윤성", "권순우", "김승우", "김지오", "김지훈", "김한울", "남현민", "문제현", "박동환", "박정인", "백민재", "신민우", "오범서", "오준서", "유현규", "윤여진", "윤정빈", "이규민", "이민하", "이주호", "이준우", "이하진", "이한율", "이호진", "임수현", "장재원", "조준현", "채윤석", "최다헌", "한서윤", "정하준", "정시훈"]
     };
 
-    let registeredStudents = CONFIG.sampleNames.map((name, i) => ({
+    let registeredStudents = CONFIG.sampleNames.map((name) => ({
         id: name, name: name,
         pw: CONFIG.defaultPassword,
         isChanged: false,
-        isFront: i < 6
+        isFront: false
     }));
 
     window.syncStudentsWithFirebase = function() {
@@ -685,7 +729,6 @@
         const body = header.closest('.notice-card').querySelector('.notice-body');
         if(body) body.classList.toggle('show');
     };
-    window.toggleBoard = function(area) { area.querySelector('.board-body-text').classList.toggle('show'); };
     window.openBoardModal = function() { document.getElementById('boardModal').style.display = 'flex'; };
     window.closeBoardModal = function() { document.getElementById('boardModal').style.display = 'none'; };
 
@@ -710,8 +753,6 @@
         document.getElementById('modalStudentCount').value = registeredStudents.length;
         generateModalInputs();
         updateStatus();
-        updateLobbyStatus();
-        updateGroupPreview();
         renderSeats();
     };
 
@@ -719,8 +760,7 @@
         document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         localStorage.setItem('currentPage', pageId);
-        if(pageId === 'groupPage') { updateGroupStatus(); updateGroupPreview(); }
-        else if(pageId === 'seatPage') { updateStatus(); renderSeats(); }
+        if(pageId === 'seatPage') { updateStatus(); renderSeats(); }
         if (window.refreshAllUI) window.refreshAllUI();
     }
 
@@ -850,7 +890,7 @@
             div.innerHTML = `
                 <span style="min-width:35px; font-weight:bold; font-size:0.8rem;">${i}번</span>
                 <input type="text" class="modal-name-input" placeholder="실명 입력" value="${existing ? (existing.rawName || existing.name || '') : ''}">
-                <label><input type="checkbox" class="modal-front-checkbox"> 앞자리</label>
+                <label><input type="checkbox" class="modal-front-checkbox" ${existing && existing.isFront ? 'checked' : ''}> 앞자리</label>
             `;
             container.appendChild(div);
         }
@@ -885,8 +925,6 @@
         isArranged = false;
         closeModal();
         updateStatus();
-        updateLobbyStatus();
-        updateGroupPreview();
         renderSeats();
     }
 
@@ -899,20 +937,6 @@
         else if (totalSeats > studentCount) statusText += `<span style="color:#f0b232;">좌석(${totalSeats}석) 여유 있음</span>`;
         else statusText += `<span style="color:#da373c;">⚠️ 좌석 부족!</span>`;
         document.getElementById('statusBox').innerHTML = statusText;
-    }
-
-    function updateLobbyStatus() { document.getElementById('lobbyStatus').innerHTML = `등록된 학생: <b>${registeredStudents.length}명</b>`; }
-    function updateGroupStatus() { document.getElementById('groupStatusBox').innerHTML = `등록된 학생: <b>${registeredStudents.length}명</b>`; }
-
-    function updateGroupPreview() {
-        const totalCount = registeredStudents.length;
-        const size = parseInt(document.getElementById('groupSizeInput').value) || 4;
-        if(totalCount === 0) { document.getElementById('groupCalcPreview').innerHTML = `등록된 학생이 없습니다.`; return; }
-        const totalGroups = Math.ceil(totalCount / size);
-        const remainder = totalCount % size;
-        let text = `총 <b>${totalCount}명</b> 중 <b>${totalGroups}개 모둠</b> 편성`;
-        if(remainder > 0) text += `<br>(일부 모둠에 잔여 인원 ${remainder}명 배분)`;
-        document.getElementById('groupCalcPreview').innerHTML = text;
     }
 
     function initLayoutFromInput() {
@@ -1008,24 +1032,6 @@
 
     function resetAll() { if (confirm("초기화하시겠습니까?")) { isArranged = false; finalGrid = []; renderSeats(); } }
 
-    function generateGroups() {
-        if (registeredStudents.length === 0) { openModal(); return; }
-        const size = parseInt(document.getElementById('groupSizeInput').value) || 4;
-        let shuffled = [...registeredStudents].sort(() => Math.random() - 0.5);
-        let groups = [];
-        for (let i = 0; i < shuffled.length; i += size) groups.push(shuffled.slice(i, i + size));
-
-        let html = `<div class="group-result-grid">`;
-        groups.forEach((g, idx) => {
-            html += `<div class="group-box"><h3>${idx + 1} 모둠</h3>`;
-            g.forEach(st => html += `<div class="group-member">• ${st.name}</div>`);
-            html += `</div>`;
-        });
-        html += `</div>`;
-        document.getElementById('groupResultArea').innerHTML = html;
-    }
-
-    // 흰색 배경 테마가 적용된 PDF 다운로드
     function exportPDF() {
         const printEl = document.getElementById('printArea');
         printEl.classList.add('pdf-print-mode');
