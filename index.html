@@ -8,18 +8,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
-            --primary: #5865F2;
-            --primary-hover: #4752C4;
-            --bg-color: #313338;
-            --card-bg: #2b2d31;
-            --text-main: #dbdee1;
-            --text-muted: #949ba4;
-            --border: #1f2023;
-            --input-bg: #1e1f22;
-            --seat-active: #5865F2;
-            --seat-hover: #4752C4;
-            --front-seat-bg: #3f3759;
-            --front-seat-border: #7c3aed;
+            --primary: #5865F2; --primary-hover: #4752C4; --bg-color: #313338;
+            --card-bg: #2b2d31; --text-main: #dbdee1; --text-muted: #949ba4;
+            --border: #1f2023; --input-bg: #1e1f22; --seat-active: #5865F2;
+            --seat-hover: #4752C4; --front-seat-bg: #3f3759; --front-seat-border: #7c3aed;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); padding: 15px; }
@@ -34,7 +26,7 @@
         p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; text-align: left; }
         label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #b5bac1; }
-        input[type="text"], input[type="password"], textarea, input[type="file"] {
+        input[type="text"], input[type="password"], input[type="number"], textarea, input[type="file"] {
             width: 100%; padding: 10px; border: 1px solid transparent; border-radius: 8px; font-size: 0.9rem; outline: none; background: var(--input-bg); color: #dbdee1;
         }
         input:focus, textarea:focus { border-color: var(--primary); }
@@ -47,16 +39,14 @@
         .btn-secondary { background-color: #4e5058; color: #dbdee1; }
         .btn-secondary:hover { background-color: #6d6f78; }
         .btn-danger { background-color: #da373c; color: white; }
+        .btn-danger:hover { background-color: #b82c30; }
         .btn-success { background-color: #248046; color: white; }
         
-        /* 우측 상단 고정 로그아웃 배지 (상시 표시) */
         .user-badge {
             position: fixed; top: 15px; right: 15px; background: var(--card-bg); border: 1px solid var(--border);
             padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 2000; cursor: pointer; color: #dbdee1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 2000; color: #dbdee1;
         }
-        .user-badge:hover { background: #35373c; border-color: #f23f43; color: #f23f43; }
-
         .menu-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
         .menu-card {
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px;
@@ -92,6 +82,17 @@
         .seat-card.front-required { background-color: var(--front-seat-bg); border-color: var(--front-seat-border); }
         .seat-card .name { font-size: 0.8rem; font-weight: 700; color: #f2f3f5; }
         .export-group { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+
+        /* PDF 출력 전용 흰색 테마 스타일 */
+        #printArea.pdf-print-mode { background-color: #ffffff !important; color: #111111 !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 20px !important; }
+        #printArea.pdf-print-mode .blackboard { background-color: #f1f3f5 !important; color: #111111 !important; border: 2px solid #333333 !important; }
+        #printArea.pdf-print-mode .col-header { color: #333333 !important; }
+        #printArea.pdf-print-mode .seat-card { background-color: #ffffff !important; border: 1.5px solid #444444 !important; box-shadow: none !important; }
+        #printArea.pdf-print-mode .seat-card.front-required { background-color: #f3e8ff !important; border: 2px solid #7c3aed !important; }
+        #printArea.pdf-print-mode .seat-card .name { color: #000000 !important; }
+        #printArea.pdf-print-mode .circle-seat-btn { background-color: #e9ecef !important; border: 1.5px solid #495057 !important; box-shadow: none !important; }
+        #printArea.pdf-print-mode .add-seat-btn { display: none !important; }
+
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: 2500; justify-content: center; align-items: center; padding: 10px; }
         .modal-content { background: var(--card-bg); border-radius: 16px; width: 100%; max-width: 480px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); overflow: hidden; border: 1px solid var(--border); color: #dbdee1; }
         .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #313338; }
@@ -107,13 +108,18 @@
         .group-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
         .group-box h3 { font-size: 0.95rem; color: var(--primary); margin-bottom: 6px; border-bottom: 2px solid var(--border); padding-bottom: 3px; }
         .group-member { font-size: 0.85rem; padding: 3px 0; color: #dbdee1; }
+
+        /* 관리자 선택 삭제 바 */
+        .admin-bulk-bar { display: none; justify-content: space-between; align-items: center; background: #1e1f22; border: 1px solid #da373c; border-radius: 8px; padding: 8px 14px; margin-bottom: 12px; }
+        .admin-bulk-left { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; color: #dbdee1; }
+        .admin-chk { width: 16px; height: 16px; cursor: pointer; accent-color: #da373c; flex-shrink: 0; }
         
         .notice-card { background: #1e1f22; border-left: 4px solid var(--primary); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 10px; text-align: left; }
-        .notice-header { display: flex; justify-content: space-between; align-items: center; }
+        .notice-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .notice-title { font-weight: 700; color: #f2f3f5; font-size: 0.95rem; }
         .notice-right { display: flex; align-items: center; gap: 8px; }
         .notice-badge { background: var(--primary); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
-        .delete-btn-small { background: #da373c; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
+        .delete-btn-small { background: #da373c; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
         .delete-btn-small:hover { background: #b82c30; }
         .notice-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 0.9rem; color: #dbdee1; word-break: break-all; }
         .notice-body.show { display: block; }
@@ -131,8 +137,8 @@
         .board-body-text.show { display: block; }
         .post-media { margin-top: 8px; max-width: 100%; border-radius: 6px; }
 
-        .discord-chat-container { display: flex; flex-direction: column; height: 480px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .discord-chat-header { padding: 14px 18px; background: #2b2d31; border-bottom: 1px solid var(--border); font-weight: 700; color: #f2f3f5; font-size: 0.95rem; }
+        .discord-chat-container { display: flex; flex-direction: column; height: 500px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .discord-chat-header { padding: 12px 18px; background: #2b2d31; border-bottom: 1px solid var(--border); font-weight: 700; color: #f2f3f5; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         .discord-messages-area { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
         .discord-msg-row { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
         .discord-msg-left { display: flex; gap: 12px; align-items: flex-start; flex: 1; }
@@ -150,24 +156,18 @@
 </head>
 <body>
 
-<!-- 우측 상단 고정 로그아웃 배지 (상시 표시) -->
-<div id="userBadge" class="user-badge" style="display: none;" onclick="logout()" title="클릭시 로그아웃">
-    👤 <span id="userNameDisplay">사용자</span> 🚪 <span style="font-size:0.75rem; color:#f23f43;">로그아웃</span>
+<div id="userBadge" class="user-badge" style="display: none;">
+    👤 <span id="userNameDisplay">사용자</span> 
+    <span id="pwChangeNavBtn" onclick="openUserPwChangeModal()" style="cursor:pointer; color:var(--primary); font-size:0.75rem; font-weight:700; margin-left:4px;" title="비밀번호 변경">🔑수정</span>
+    | 🚪 <span onclick="logout()" style="cursor:pointer; color:#f23f43;" title="로그아웃">로그아웃</span>
 </div>
 
-<!-- 1. 로그인 화면 -->
 <div id="loginPage" class="page-view active">
     <div class="auth-container">
         <h1 id="loginTitleText">🔐 로그인</h1>
         <p>학급 시스템 이용을 위해 로그인해주세요.</p>
-        <div class="form-group">
-            <label>아이디 (실명을 입력하세요)</label>
-            <input type="text" id="loginId" placeholder="예: 이윤성">
-        </div>
-        <div class="form-group">
-            <label>비밀번호 (초기값: 1234)</label>
-            <input type="password" id="loginPw" placeholder="비밀번호 입력">
-        </div>
+        <div class="form-group"><label>아이디 (실명을 입력하세요)</label><input type="text" id="loginId" placeholder="예: 이윤성"></div>
+        <div class="form-group"><label>비밀번호 (초기값: 1234)</label><input type="password" id="loginPw" placeholder="비밀번호 입력"></div>
         <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
             <input type="checkbox" id="rememberLogin" checked style="width: auto;">
             <label for="rememberLogin" style="margin: 0; cursor: pointer;">로그인 유지</label>
@@ -178,37 +178,26 @@
     </div>
 </div>
 
-<!-- 관리자 로그인 모달 -->
 <div class="modal-overlay" id="adminModal">
     <div class="modal-content" style="max-width: 360px;">
-        <div class="modal-header">
-            <h2>관리자 로그인</h2>
-            <button class="close-btn" onclick="closeAdminModal()">✕</button>
-        </div>
+        <div class="modal-header"><h2>관리자 로그인</h2><button class="close-btn" onclick="closeAdminModal()">✕</button></div>
         <div class="modal-body">
-            <div class="form-group">
-                <label>관리자 비밀번호</label>
-                <input type="password" id="adminPwInput" placeholder="관리자 비번 입력">
-            </div>
+            <div class="form-group"><label>관리자 비밀번호</label><input type="password" id="adminPwInput" placeholder="관리자 비번 입력" onkeypress="if(event.key==='Enter') handleAdminLogin()"></div>
             <button class="btn btn-primary" onclick="handleAdminLogin()">관리자 승인</button>
         </div>
     </div>
 </div>
 
-<!-- 2. 비밀번호 강제 변경 화면 -->
 <div id="pwChangePage" class="page-view">
     <div class="auth-container">
         <h1>🔑 비밀번호 변경</h1>
         <p>안전한 사용을 위해 새 비밀번호로 변경해주세요.</p>
-        <div class="form-group">
-            <label>새 비밀번호</label>
-            <input type="password" id="newPwInput" placeholder="새 비밀번호 입력">
-        </div>
-        <button class="btn btn-primary" onclick="saveNewPassword()">변경하고 시작하기</button>
+        <div class="form-group"><label>새 비밀번호</label><input type="password" id="newPwInput" placeholder="새 비밀번호 입력"></div>
+        <button class="btn btn-primary" onclick="saveNewPassword()">변경하고 저장하기</button>
+        <button class="btn btn-secondary" onclick="cancelPwChange()" style="margin-top: 8px;">취소</button>
     </div>
 </div>
 
-<!-- 3. 비로그인 전용 대시보드 화면 -->
 <div id="guestDashboardPage" class="page-view">
     <div class="auth-container" style="max-width: 480px;">
         <h1>🚪 비로그인 전용 모드</h1>
@@ -220,7 +209,6 @@
     </div>
 </div>
 
-<!-- 4. 정식 로비 화면 (대시보드) -->
 <div id="dashboardPage" class="page-view">
     <div class="dashboard-container">
         <h1 id="dashboardTitleText">🏫 스마트 학급 관리 시스템</h1>
@@ -228,52 +216,31 @@
         
         <div style="margin-bottom: 20px;">
             <button class="roster-manage-btn" onclick="openModal()">📝 학생 명단 리스트 등록하기</button>
-            <div id="lobbyStatus" style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
-                등록된 학생: <b>0명</b>
-            </div>
+            <div id="lobbyStatus" style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">등록된 학생: <b>0명</b></div>
         </div>
 
         <div class="menu-cards">
-            <div class="menu-card" onclick="switchPage('seatPage')">
-                <h2>🎯 자리 배치 시스템</h2>
-                <p>앞자리 우선 배정 및 파일 다운로드</p>
-            </div>
-            <div class="menu-card" onclick="switchPage('groupPage')">
-                <h2>👥 무작위 모둠 편성</h2>
-                <p>공정한 무작위 조 편성</p>
-            </div>
-            <div class="menu-card" onclick="switchPage('noticePage')">
-                <h2>📌 학급 공지사항</h2>
-                <p>선생님(관리자) 전용 공지 게시판</p>
-            </div>
-            <div class="menu-card" onclick="switchPage('boardPage')">
-                <h2>💬 자유 게시판</h2>
-                <p>사진, 동영상 첨부가 가능한 자유 소통 공간</p>
-            </div>
-            <div class="menu-card" onclick="switchPage('chatPage')">
-                <h2 id="chatMenuTitle">💬 실시간 소통방</h2>
-                <p>디스코드 감성 실시간 메신저</p>
-            </div>
+            <div class="menu-card" onclick="switchPage('seatPage')"><h2>🎯 자리 배치 시스템</h2><p>앞자리 우선 배정 및 파일 다운로드</p></div>
+            <div class="menu-card" onclick="switchPage('groupPage')"><h2>👥 무작위 모둠 편성</h2><p>공정한 무작위 조 편성</p></div>
+            <div class="menu-card" onclick="switchPage('noticePage')"><h2>📌 학급 공지사항</h2><p>선생님(관리자) 전용 공지 게시판</p></div>
+            <div class="menu-card" onclick="switchPage('boardPage')"><h2>💬 자유 게시판</h2><p>사진, 동영상 첨부가 가능한 자유 소통 공간</p></div>
+            <div class="menu-card" onclick="switchPage('chatPage')"><h2 id="chatMenuTitle">💬 실시간 소통방</h2><p>디스코드 감성 실시간 메신저</p></div>
         </div>
     </div>
 </div>
 
-<!-- 5. 자리 배치 시스템 화면 -->
 <div id="seatPage" class="page-view">
     <div class="sub-nav">
         <button class="back-btn" onclick="goBackFromSeat()">← 돌아가기</button>
         <h2 style="font-size: 1.1rem; color:#f2f3f5; margin: 0;">🎯 자리 배치 시스템</h2>
         <button class="back-btn" onclick="openModal()">📝 명단 및 앞자리 설정</button>
     </div>
-
     <div class="container">
         <div class="panel">
             <h2 class="panel-title">설정 메뉴</h2>
             <div class="status-box" id="statusBox">등록된 학생: <b>0명</b></div>
             <div class="section-title">세로줄(열) 개수</div>
-            <div class="form-group">
-                <input type="number" id="totalCols" value="6" min="1" max="10" onchange="initLayoutFromInput()">
-            </div>
+            <div class="form-group"><input type="number" id="totalCols" value="6" min="1" max="10" onchange="initLayoutFromInput()"></div>
             <button class="btn btn-primary" onclick="shuffleSeats()">🔀 조건 반영 자리배치</button>
             <button class="btn btn-danger" onclick="resetAll()" style="margin-top:10px;">🔄 자리 초기화</button>
             <div class="export-group">
@@ -281,7 +248,6 @@
                 <button class="btn btn-success" onclick="exportWord()" style="flex:1;">Word 다운</button>
             </div>
         </div>
-
         <div class="panel" id="printArea">
             <div class="classroom-container">
                 <div class="blackboard">칠 판 (FRONT)</div>
@@ -291,7 +257,6 @@
     </div>
 </div>
 
-<!-- 6. 무작위 모둠 편성 화면 -->
 <div id="groupPage" class="page-view">
     <div class="sub-nav">
         <button class="back-btn" onclick="goBackFromSeat()">← 돌아가기</button>
@@ -314,7 +279,6 @@
     </div>
 </div>
 
-<!-- 7. 학급 공지사항 화면 -->
 <div id="noticePage" class="page-view">
     <div class="sub-nav">
         <button class="back-btn" onclick="switchPage('dashboardPage')">← 로비로</button>
@@ -330,12 +294,17 @@
         </div>
         <div class="panel">
             <h3 style="margin-bottom: 10px; font-size: 1rem;">공지사항 목록 (클릭 시 본문 확인)</h3>
+            <div id="noticeBulkBar" class="admin-bulk-bar">
+                <label class="admin-bulk-left" style="margin:0; cursor:pointer;">
+                    <input type="checkbox" class="admin-chk" id="noticeSelectAll" onchange="toggleAllCheckboxes('notice-chk', this.checked)"> 전체 선택
+                </label>
+                <button class="delete-btn-small" onclick="deleteSelectedItems('notices', 'notice-chk', 'noticeSelectAll')">🗑️ 선택 공지 삭제</button>
+            </div>
             <div id="noticeListArea"><div style="color: var(--text-muted); text-align: center; padding: 20px;">등록된 공지가 없습니다.</div></div>
         </div>
     </div>
 </div>
 
-<!-- 8. 자유 게시판 화면 -->
 <div id="boardPage" class="page-view">
     <div class="sub-nav">
         <button class="back-btn" onclick="switchPage('dashboardPage')">← 로비로</button>
@@ -345,30 +314,29 @@
     <div class="container" style="max-width: 800px; grid-template-columns: 1fr;">
         <div class="panel">
             <h3 style="margin-bottom: 12px; font-size: 1rem; color: #f2f3f5;">실시간 자유 소통 목록 (클릭 시 본문 확인)</h3>
+            <div id="boardBulkBar" class="admin-bulk-bar">
+                <label class="admin-bulk-left" style="margin:0; cursor:pointer;">
+                    <input type="checkbox" class="admin-chk" id="boardSelectAll" onchange="toggleAllCheckboxes('board-chk', this.checked)"> 전체 선택
+                </label>
+                <button class="delete-btn-small" onclick="deleteSelectedItems('boardPosts', 'board-chk', 'boardSelectAll')">🗑️ 선택 게시글 삭제</button>
+            </div>
             <div id="boardListArea"><div style="color: var(--text-muted); text-align: center; padding: 20px;">작성된 게시글이 없습니다.</div></div>
         </div>
     </div>
 </div>
 
-<!-- 자유 게시판 글쓰기 모달 창 -->
 <div class="modal-overlay" id="boardModal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2>✍️ 자유 게시판 글 작성</h2>
-            <button class="close-btn" onclick="closeBoardModal()">✕</button>
-        </div>
+        <div class="modal-header"><h2>✍️ 자유 게시판 글 작성</h2><button class="close-btn" onclick="closeBoardModal()">✕</button></div>
         <div class="modal-body">
             <div class="form-group"><label>제목</label><input type="text" id="boardTitle" placeholder="제목을 입력하세요"></div>
             <div class="form-group"><label>내용</label><textarea id="boardContent" rows="4" placeholder="내용을 입력하세요"></textarea></div>
             <div class="form-group"><label>사진 / 동영상 / 파일 첨부</label><input type="file" id="boardFile" accept="image/*,video/*,.pdf,.hwp,.txt,.zip"></div>
         </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" onclick="uploadBoardPost()">게시글 등록하기</button>
-        </div>
+        <div class="modal-footer"><button class="btn btn-primary" onclick="uploadBoardPost()">게시글 등록하기</button></div>
     </div>
 </div>
 
-<!-- 9. 실시간 소통방 화면 -->
 <div id="chatPage" class="page-view">
     <div class="sub-nav">
         <button class="back-btn" onclick="switchPage('dashboardPage')">← 로비로</button>
@@ -377,7 +345,15 @@
     </div>
     <div style="max-width: 800px; margin: 0 auto;">
         <div class="discord-chat-container">
-            <div class="discord-chat-header" id="discordChatHeaderDesc">💬 실시간 메신저 (실시간 영구 저장)</div>
+            <div class="discord-chat-header">
+                <span id="discordChatHeaderDesc">💬 실시간 메신저 (실시간 영구 저장)</span>
+                <div id="chatBulkBar" style="display: none; align-items: center; gap: 10px;">
+                    <label style="display:flex; align-items:center; gap:5px; margin:0; font-size:0.8rem; color:#dbdee1; cursor:pointer;">
+                        <input type="checkbox" class="admin-chk" id="chatSelectAll" onchange="toggleAllCheckboxes('chat-chk', this.checked)"> 전체 선택
+                    </label>
+                    <button class="delete-btn-small" onclick="deleteSelectedItems('discordChatMessages', 'chat-chk', 'chatSelectAll')">🗑️ 선택 메시지 삭제</button>
+                </div>
+            </div>
             <div class="discord-messages-area" id="discordMessagesArea"></div>
             <div class="discord-input-area">
                 <input type="text" id="discordChatInput" placeholder="메시지를 입력하세요..." onkeypress="if(event.key==='Enter') sendDiscordMessage()">
@@ -387,28 +363,21 @@
     </div>
 </div>
 
-<!-- 학생 명단 및 앞자리 설정 모달 창 -->
 <div class="modal-overlay" id="studentModal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2>📝 학생 명단 및 앞자리 설정</h2>
-            <button class="close-btn" onclick="closeModal()">✕</button>
-        </div>
+        <div class="modal-header"><h2>📝 학생 명단 및 앞자리 설정</h2><button class="close-btn" onclick="closeModal()">✕</button></div>
         <div class="modal-body">
             <div class="form-group"><label>전체 인원수</label><input type="number" id="modalStudentCount" value="32" min="1" max="60" oninput="generateModalInputs()" onchange="generateModalInputs()"></div>
             <div style="margin: 10px 0;"><button class="btn btn-secondary" onclick="loadSampleDataInModal()">샘플 명단 채우기</button></div>
             <div class="student-grid" id="modalStudentInputs"></div>
         </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" onclick="saveStudentsFromModal()">저장하기</button>
-        </div>
+        <div class="modal-footer"><button class="btn btn-primary" onclick="saveStudentsFromModal()">저장하기</button></div>
     </div>
 </div>
 
-<!-- Firebase 연동 및 삭제 기능 스크립트 -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, set, remove, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const CONFIG = {
         className: "1학년 10반",
@@ -422,7 +391,7 @@
     document.getElementById('dashboardTitleText').innerText = `🏫 ${CONFIG.className} 스마트 학급 관리 시스템`;
     document.getElementById('chatMenuTitle').innerText = `💬 ${CONFIG.className} 실시간 소통방`;
     document.getElementById('chatHeaderTitle').innerText = `💬 ${CONFIG.className} 실시간 소통방`;
-    document.getElementById('discordChatHeaderDesc').innerText = `💬 ${CONFIG.className} 디스코드 스타일 메신저 (실시간 영구 저장)`;
+    document.getElementById('discordChatHeaderDesc').innerText = `💬 ${CONFIG.className} 실시간 메신저`;
 
     const firebaseConfig = {
         databaseURL: "https://jeongbobalpio-default-rtdb.firebaseio.com/",
@@ -430,9 +399,64 @@
     };
     const db = getDatabase(initializeApp(firebaseConfig));
 
+    // 욕설 필터링 리스트
+    const profanityList = ["시발", "씨발", "ㅅㅂ", "ㅆㅂ", "새끼", "병신", "ㅂㅅ", "지랄", "ㅈㄹ", "꺼져", "닥쳐", "개새", "미친", "존나", "ㅈㄴ", "창녀", "창놈", "애미", "애비"];
+    window.filterProfanity = function(text) {
+        if (!text) return text;
+        let filtered = text;
+        profanityList.forEach(badWord => {
+            const regex = new RegExp(badWord, 'gi');
+            filtered = filtered.replace(regex, '*'.repeat(badWord.length));
+        });
+        return filtered;
+    };
+
+    let cachedNotices = null;
+    let cachedBoardPosts = null;
+    let cachedChatMessages = null;
+
+    // Firebase 사용자 비밀번호 동기화
+    window.firebaseUsers = {};
+    onValue(ref(db, 'users'), (snapshot) => {
+        window.firebaseUsers = snapshot.val() || {};
+        if (window.syncStudentsWithFirebase) window.syncStudentsWithFirebase();
+    });
+
+    window.savePasswordToFirebase = function(userId, newPw) {
+        return set(ref(db, 'users/' + userId), { pw: newPw, isChanged: true });
+    };
+
+    // 다중 선택 일괄 삭제 공통 로직
+    window.toggleAllCheckboxes = function(className, isChecked) {
+        document.querySelectorAll('.' + className).forEach(chk => {
+            chk.checked = isChecked;
+        });
+    };
+
+    window.deleteSelectedItems = function(dbPath, className, masterCheckboxId) {
+        const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
+        if (!currentUserObj || currentUserObj.id !== '관리자') return alert("관리자 권한이 필요합니다.");
+
+        const checkedBoxes = Array.from(document.querySelectorAll('.' + className + ':checked'));
+        if (checkedBoxes.length === 0) return alert("삭제할 항목을 하나 이상 선택해주세요.");
+
+        if (confirm(`선택한 ${checkedBoxes.length}개의 항목을 정말 삭제하시겠습니까?`)) {
+            const updates = {};
+            checkedBoxes.forEach(chk => {
+                updates[dbPath + '/' + chk.value] = null;
+            });
+            update(ref(db), updates).then(() => {
+                const masterChk = document.getElementById(masterCheckboxId);
+                if (masterChk) masterChk.checked = false;
+                alert(`${checkedBoxes.length}개의 항목이 삭제되었습니다.`);
+            }).catch(err => alert("삭제 중 오류가 발생했습니다: " + err.message));
+        }
+    };
+
+    // 공지사항
     window.uploadNotice = function() {
-        const title = document.getElementById('noticeTitle').value.trim();
-        const content = document.getElementById('noticeContent').value.trim();
+        const title = window.filterProfanity(document.getElementById('noticeTitle').value.trim());
+        const content = window.filterProfanity(document.getElementById('noticeContent').value.trim());
         if(!title || !content) return alert("제목과 내용을 입력하세요.");
         set(push(ref(db, 'notices')), { title, content, time: Date.now() });
         document.getElementById('noticeTitle').value = "";
@@ -446,19 +470,24 @@
         }
     };
 
-    onValue(ref(db, 'notices'), (snapshot) => {
+    window.renderNoticesList = function() {
         const container = document.getElementById('noticeListArea');
+        const bulkBar = document.getElementById('noticeBulkBar');
         if(!container) return;
-        const data = snapshot.val();
-        if(!data) { container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">등록된 공지가 없습니다.</div>`; return; }
-        
+
         const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
         const isAdmin = currentUserObj && currentUserObj.id === '관리자';
+        if (bulkBar) bulkBar.style.display = (isAdmin && cachedNotices) ? 'flex' : 'none';
 
-        container.innerHTML = Object.entries(data).reverse().map(([key, n]) => `
+        if(!cachedNotices) { container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">등록된 공지가 없습니다.</div>`; return; }
+
+        container.innerHTML = Object.entries(cachedNotices).reverse().map(([key, n]) => `
             <div class="notice-card">
                 <div class="notice-header">
-                    <span class="notice-title" onclick="toggleNotice(this)" style="flex:1; cursor:pointer;">📌 ${n.title}</span>
+                    <div style="display:flex; align-items:center; gap:10px; flex:1;">
+                        ${isAdmin ? `<input type="checkbox" class="admin-chk notice-chk" value="${key}">` : ''}
+                        <span class="notice-title" onclick="toggleNotice(this)" style="flex:1; cursor:pointer;">📌 ${n.title}</span>
+                    </div>
                     <div class="notice-right">
                         <span class="notice-badge" onclick="toggleNotice(this)" style="cursor:pointer;">공지</span>
                         ${isAdmin ? `<button class="delete-btn-small" onclick="deleteNotice('${key}')">삭제</button>` : ''}
@@ -467,11 +496,17 @@
                 <div class="notice-body"><p style="white-space: pre-wrap;">${n.content}</p></div>
             </div>
         `).join('');
+    };
+
+    onValue(ref(db, 'notices'), (snapshot) => {
+        cachedNotices = snapshot.val();
+        window.renderNoticesList();
     });
 
+    // 자유 게시판
     window.uploadBoardPost = function() {
-        const title = document.getElementById('boardTitle').value.trim();
-        const content = document.getElementById('boardContent').value.trim();
+        const title = window.filterProfanity(document.getElementById('boardTitle').value.trim());
+        const content = window.filterProfanity(document.getElementById('boardContent').value.trim());
         const fileInput = document.getElementById('boardFile');
         if(!title || !content) return alert("제목과 내용을 입력하세요.");
         const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
@@ -504,21 +539,21 @@
             if(confirm("정말 이 게시글을 삭제하시겠습니까?")) {
                 remove(ref(db, 'boardPosts/' + key)).then(() => alert("삭제되었습니다."));
             }
-        } else {
-            alert("삭제 권한이 없습니다.");
-        }
+        } else { alert("삭제 권한이 없습니다."); }
     };
 
-    onValue(ref(db, 'boardPosts'), (snapshot) => {
+    window.renderBoardList = function() {
         const container = document.getElementById('boardListArea');
+        const bulkBar = document.getElementById('boardBulkBar');
         if(!container) return;
-        const data = snapshot.val();
-        if(!data) { container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">작성된 게시글이 없습니다.</div>`; return; }
-        
+
         const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
         const isAdmin = currentUserObj && currentUserObj.id === '관리자';
+        if (bulkBar) bulkBar.style.display = (isAdmin && cachedBoardPosts) ? 'flex' : 'none';
 
-        container.innerHTML = Object.entries(data).reverse().map(([key, p]) => {
+        if(!cachedBoardPosts) { container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">작성된 게시글이 없습니다.</div>`; return; }
+
+        container.innerHTML = Object.entries(cachedBoardPosts).reverse().map(([key, p]) => {
             const timeStr = new Date(p.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const initial = p.author ? p.author.charAt(0) : '?';
             const canDelete = isAdmin || (currentUserObj && currentUserObj.name === p.author);
@@ -531,13 +566,11 @@
             }
             return `
                 <div class="board-post-row">
+                    ${isAdmin ? `<input type="checkbox" class="admin-chk board-chk" value="${key}" style="margin-top:10px;">` : ''}
                     <div class="board-avatar">${initial}</div>
                     <div class="board-content-wrapper">
                         <div class="board-meta">
-                            <div class="board-meta-left">
-                                <span class="board-author">${p.author}</span>
-                                <span class="board-time">${timeStr}</span>
-                            </div>
+                            <div class="board-meta-left"><span class="board-author">${p.author}</span><span class="board-time">${timeStr}</span></div>
                             ${canDelete ? `<button class="delete-btn-small" onclick="deleteBoardPost('${key}', '${p.author}')">삭제</button>` : ''}
                         </div>
                         <div class="board-content-area" onclick="toggleBoard(this)">
@@ -548,11 +581,18 @@
                 </div>
             `;
         }).join('');
+    };
+
+    onValue(ref(db, 'boardPosts'), (snapshot) => {
+        cachedBoardPosts = snapshot.val();
+        window.renderBoardList();
     });
 
+    // 실시간 채팅
     window.sendDiscordMessage = function() {
-        const text = document.getElementById('discordChatInput').value.trim();
-        if(!text) return;
+        const rawText = document.getElementById('discordChatInput').value.trim();
+        if(!rawText) return;
+        const text = window.filterProfanity(rawText);
         const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
         const authorName = currentUserObj ? currentUserObj.name : "게스트";
         set(push(ref(db, 'discordChatMessages')), { name: authorName, text, time: Date.now() });
@@ -565,21 +605,24 @@
         }
     };
 
-    onValue(ref(db, 'discordChatMessages'), (snapshot) => {
+    window.renderChatMessages = function() {
         const container = document.getElementById('discordMessagesArea');
+        const bulkBar = document.getElementById('chatBulkBar');
         if(!container) return;
-        const data = snapshot.val();
-        if(!data) { container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">메시지가 없습니다. 첫 대화를 시작해보세요!</div>`; return; }
-        
+
         const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
         const isAdmin = currentUserObj && currentUserObj.id === '관리자';
+        if (bulkBar) bulkBar.style.display = (isAdmin && cachedChatMessages) ? 'flex' : 'none';
 
-        container.innerHTML = Object.entries(data).map(([key, msg]) => {
+        if(!cachedChatMessages) { container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">메시지가 없습니다. 첫 대화를 시작해보세요!</div>`; return; }
+
+        container.innerHTML = Object.entries(cachedChatMessages).map(([key, msg]) => {
             const timeStr = new Date(msg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const initial = msg.name ? msg.name.charAt(0) : '?';
             return `
                 <div class="discord-msg-row">
                     <div class="discord-msg-left">
+                        ${isAdmin ? `<input type="checkbox" class="admin-chk chat-chk" value="${key}" style="margin-top:10px;">` : ''}
                         <div class="discord-avatar-circle">${initial}</div>
                         <div class="discord-msg-body">
                             <div class="discord-msg-meta"><span class="discord-author-name">${msg.name}</span><span class="discord-timestamp">${timeStr}</span></div>
@@ -591,10 +634,21 @@
             `;
         }).join('');
         container.scrollTop = container.scrollHeight;
+    };
+
+    onValue(ref(db, 'discordChatMessages'), (snapshot) => {
+        cachedChatMessages = snapshot.val();
+        window.renderChatMessages();
     });
+
+    // 계정 전환 시 모든 리스트 강제 리렌더링 함수
+    window.refreshAllUI = function() {
+        if (window.renderNoticesList) window.renderNoticesList();
+        if (window.renderBoardList) window.renderBoardList();
+        if (window.renderChatMessages) window.renderChatMessages();
+    };
 </script>
 
-<!-- 메인 로직 스크립트 -->
 <script>
     const CONFIG = window.APP_CONFIG || {
         adminPassword: "rhksflwk1234",
@@ -604,10 +658,20 @@
 
     let registeredStudents = CONFIG.sampleNames.map((name, i) => ({
         id: name, name: name,
-        pw: localStorage.getItem('pw_' + name) || CONFIG.defaultPassword,
-        isChanged: localStorage.getItem('changed_' + name) === 'true',
+        pw: CONFIG.defaultPassword,
+        isChanged: false,
         isFront: i < 6
     }));
+
+    window.syncStudentsWithFirebase = function() {
+        const fbUsers = window.firebaseUsers || {};
+        registeredStudents.forEach(st => {
+            if (fbUsers[st.id]) {
+                st.pw = fbUsers[st.id].pw || CONFIG.defaultPassword;
+                st.isChanged = fbUsers[st.id].isChanged === true;
+            }
+        });
+    };
 
     let colSeatCounts = [6, 6, 5, 5, 5, 5]; 
     let isArranged = false;
@@ -633,21 +697,15 @@
             isGuestMode = true;
             currentUser = { id: 'guest', name: '비로그인 사용자' };
             document.getElementById('userNameDisplay').innerText = currentUser.name;
+            document.getElementById('pwChangeNavBtn').style.display = 'none';
             document.getElementById('userBadge').style.display = 'flex';
             switchPage(savedPage === 'loginPage' ? 'guestDashboardPage' : savedPage);
         } else if (rememberedUser) {
             currentUser = rememberedUser === '관리자' ? { id: '관리자', name: '관리자' } : registeredStudents.find(s => s.id === rememberedUser);
             if(currentUser) {
-                document.getElementById('userNameDisplay').innerText = currentUser.name;
-                document.getElementById('userBadge').style.display = 'flex';
-                document.getElementById('adminNoticeWritePanel').style.display = (currentUser.id === '관리자') ? 'block' : 'none';
-                switchPage(savedPage === 'loginPage' ? 'dashboardPage' : savedPage);
-            } else {
-                switchPage('loginPage');
-            }
-        } else {
-            switchPage('loginPage');
-        }
+                processLoginSuccess(true, savedPage === 'loginPage' ? 'dashboardPage' : savedPage);
+            } else { switchPage('loginPage'); }
+        } else { switchPage('loginPage'); }
 
         document.getElementById('modalStudentCount').value = registeredStudents.length;
         generateModalInputs();
@@ -663,6 +721,7 @@
         localStorage.setItem('currentPage', pageId);
         if(pageId === 'groupPage') { updateGroupStatus(); updateGroupPreview(); }
         else if(pageId === 'seatPage') { updateStatus(); renderSeats(); }
+        if (window.refreshAllUI) window.refreshAllUI();
     }
 
     function runAsGuest() {
@@ -670,16 +729,13 @@
         currentUser = { id: 'guest', name: '비로그인 사용자' };
         localStorage.setItem('rememberUser', 'guest');
         document.getElementById('userNameDisplay').innerText = currentUser.name;
+        document.getElementById('pwChangeNavBtn').style.display = 'none';
         document.getElementById('userBadge').style.display = 'flex';
         switchPage('guestDashboardPage');
     }
 
     function goBackFromSeat() {
-        if(isGuestMode) {
-            switchPage('guestDashboardPage');
-        } else {
-            switchPage('dashboardPage');
-        }
+        switchPage(isGuestMode ? 'guestDashboardPage' : 'dashboardPage');
     }
 
     function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
@@ -690,12 +746,14 @@
         if(pw === CONFIG.adminPassword) {
             currentUser = { id: '관리자', name: '관리자' };
             isGuestMode = false;
+            document.getElementById('adminPwInput').value = "";
             closeAdminModal();
             processLoginSuccess(true);
         } else { alert("관리자 비밀번호가 틀렸습니다."); }
     }
 
     function handleLogin() {
+        window.syncStudentsWithFirebase();
         const id = document.getElementById('loginId').value.trim();
         const pw = document.getElementById('loginPw').value.trim();
         const remember = document.getElementById('rememberLogin').checked;
@@ -712,30 +770,50 @@
         } else { alert("등록되지 않은 학생 실명입니다."); }
     }
 
+    window.openUserPwChangeModal = function() {
+        if (!currentUser || currentUser.id === '관리자' || currentUser.id === 'guest') {
+            return alert("학생 계정으로 로그인한 경우에만 비밀번호를 수정할 수 있습니다.");
+        }
+        targetUserForPwChange = currentUser;
+        document.getElementById('newPwInput').value = "";
+        switchPage('pwChangePage');
+    };
+
+    function cancelPwChange() {
+        if (currentUser) switchPage('dashboardPage');
+        else switchPage('loginPage');
+    }
+
     function saveNewPassword() {
         const newPw = document.getElementById('newPwInput').value.trim();
         if(!newPw) return alert("새 비밀번호를 입력하세요.");
-        targetUserForPwChange.pw = newPw;
-        targetUserForPwChange.isChanged = true;
-        localStorage.setItem('pw_' + targetUserForPwChange.id, newPw);
-        localStorage.setItem('changed_' + targetUserForPwChange.id, 'true');
-        currentUser = targetUserForPwChange;
-        alert("비밀번호가 변경되었습니다.");
-        processLoginSuccess(document.getElementById('rememberLogin').checked);
+        if(!targetUserForPwChange) return alert("대상을 찾을 수 없습니다.");
+
+        if (window.savePasswordToFirebase) {
+            window.savePasswordToFirebase(targetUserForPwChange.id, newPw).then(() => {
+                targetUserForPwChange.pw = newPw;
+                targetUserForPwChange.isChanged = true;
+                currentUser = targetUserForPwChange;
+                document.getElementById('newPwInput').value = "";
+                alert("비밀번호가 안전하게 변경되어 모든 기기에 동기화되었습니다.");
+                processLoginSuccess(document.getElementById('rememberLogin').checked);
+            }).catch(err => alert("비밀번호 저장 실패: " + err.message));
+        }
     }
 
-    function processLoginSuccess(remember) {
+    function processLoginSuccess(remember, targetPage = 'dashboardPage') {
         document.getElementById('userNameDisplay').innerText = currentUser.name;
-        document.getElementById('userBadge').style.display = 'flex';
+        const isAdmin = currentUser.id === '관리자';
         
-        if(remember) {
-            localStorage.setItem('rememberUser', currentUser.id);
-        } else {
-            localStorage.removeItem('rememberUser');
-        }
+        document.getElementById('pwChangeNavBtn').style.display = (isAdmin || currentUser.id === 'guest') ? 'none' : 'inline';
+        document.getElementById('userBadge').style.display = 'flex';
+        document.getElementById('adminNoticeWritePanel').style.display = isAdmin ? 'block' : 'none';
+        
+        if(remember) localStorage.setItem('rememberUser', currentUser.id);
+        else localStorage.removeItem('rememberUser');
 
-        document.getElementById('adminNoticeWritePanel').style.display = (currentUser.id === '관리자') ? 'block' : 'none';
-        switchPage('dashboardPage');
+        if (window.refreshAllUI) window.refreshAllUI();
+        switchPage(targetPage);
     }
 
     window.logout = function() {
@@ -745,11 +823,13 @@
             currentUser = null; 
             isGuestMode = false;
             document.getElementById('userBadge').style.display = 'none';
+            document.getElementById('adminNoticeWritePanel').style.display = 'none';
             document.getElementById('loginId').value = "";
             document.getElementById('loginPw').value = "";
+            if (window.refreshAllUI) window.refreshAllUI();
             switchPage('loginPage');
         }
-    }
+    };
 
     function openModal() { document.getElementById('studentModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('studentModal').style.display = 'none'; }
@@ -787,16 +867,17 @@
     function saveStudentsFromModal() {
         const nameInputs = document.querySelectorAll('.modal-name-input');
         const frontCheckboxes = document.querySelectorAll('.modal-front-checkbox');
+        const fbUsers = window.firebaseUsers || {};
         let list = [];
         nameInputs.forEach((input, idx) => {
             const rawName = input.value.trim();
             const displayName = rawName !== '' ? rawName : `${idx + 1}번 학생`;
             const isFront = frontCheckboxes[idx].checked;
-            const existing = registeredStudents.find(s => s.name === displayName);
+            const fbData = fbUsers[displayName];
             list.push({
                 id: displayName, name: displayName, rawName: rawName,
-                pw: existing ? existing.pw : (localStorage.getItem('pw_' + displayName) || CONFIG.defaultPassword),
-                isChanged: existing ? existing.isChanged : (localStorage.getItem('changed_' + displayName) === 'true'),
+                pw: fbData ? fbData.pw : CONFIG.defaultPassword,
+                isChanged: fbData ? fbData.isChanged === true : false,
                 isFront: isFront
             });
         });
@@ -826,16 +907,11 @@
     function updateGroupPreview() {
         const totalCount = registeredStudents.length;
         const size = parseInt(document.getElementById('groupSizeInput').value) || 4;
-        if(totalCount === 0) {
-            document.getElementById('groupCalcPreview').innerHTML = `등록된 학생이 없습니다.`;
-            return;
-        }
+        if(totalCount === 0) { document.getElementById('groupCalcPreview').innerHTML = `등록된 학생이 없습니다.`; return; }
         const totalGroups = Math.ceil(totalCount / size);
         const remainder = totalCount % size;
         let text = `총 <b>${totalCount}명</b> 중 <b>${totalGroups}개 모둠</b> 편성`;
-        if(remainder > 0) {
-            text += `<br>(일부 모둠에 잔여 인원 ${remainder}명 배분)`;
-        }
+        if(remainder > 0) text += `<br>(일부 모둠에 잔여 인원 ${remainder}명 배분)`;
         document.getElementById('groupCalcPreview').innerHTML = text;
     }
 
@@ -949,8 +1025,22 @@
         document.getElementById('groupResultArea').innerHTML = html;
     }
 
+    // 흰색 배경 테마가 적용된 PDF 다운로드
     function exportPDF() {
-        html2pdf().set({ margin: 10, filename: '자리배치표.pdf', jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' } }).from(document.getElementById('printArea')).save();
+        const printEl = document.getElementById('printArea');
+        printEl.classList.add('pdf-print-mode');
+        
+        html2pdf().set({
+            margin: 10,
+            filename: '자리배치표.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, backgroundColor: '#ffffff' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        }).from(printEl).save().then(() => {
+            printEl.classList.remove('pdf-print-mode');
+        }).catch(() => {
+            printEl.classList.remove('pdf-print-mode');
+        });
     }
 
     function exportWord() {
@@ -966,12 +1056,12 @@
             columnsData.push(colList);
         });
 
-        let tableHtml = `<table border="1" style="border-collapse:collapse; width:100%; text-align:center;"><tr><th colspan="${totalCols}" style="background:#111214; color:#fff; padding:10px;">칠 판 (FRONT)</th></tr>`;
+        let tableHtml = `<table border="1" style="border-collapse:collapse; width:100%; text-align:center;"><tr><th colspan="${totalCols}" style="background:#f1f3f5; color:#111; padding:10px;">칠 판 (FRONT)</th></tr>`;
         for (let r = 0; r < maxRows; r++) {
             tableHtml += `<tr>`;
             for (let c = 0; c < totalCols; c++) {
                 if (r < columnsData[c].length) tableHtml += `<td style="padding:10px;"><b>${columnsData[c][r].name}</b></td>`;
-                else tableHtml += `<td style="background:#2b2d31; color:#72767d;">-</td>`;
+                else tableHtml += `<td style="background:#f8f9fa; color:#adb5bd;">-</td>`;
             }
             tableHtml += `</tr>`;
         }
@@ -983,6 +1073,5 @@
         URL.revokeObjectURL(url);
     }
 </script>
-
 </body>
 </html>
