@@ -850,7 +850,7 @@
             div.innerHTML = `
                 <span style="min-width:35px; font-weight:bold; font-size:0.8rem;">${i}번</span>
                 <input type="text" class="modal-name-input" placeholder="실명 입력" value="${existing ? (existing.rawName || existing.name || '') : ''}">
-                <label><input type="checkbox" class="modal-front-checkbox" ${existing && existing.isFront ? 'checked' : ''}> 앞자리</label>
+                <label><input type="checkbox" class="modal-front-checkbox"> 앞자리</label>
             `;
             container.appendChild(div);
         }
