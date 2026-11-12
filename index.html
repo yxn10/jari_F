@@ -46,14 +46,17 @@
         .btn-primary:hover { background-color: var(--primary-hover); }
         .btn-secondary { background-color: #4e5058; color: #dbdee1; }
         .btn-secondary:hover { background-color: #6d6f78; }
-        .btn-danger { background-color: #da373c; color: white; margin-top: 15px; }
+        .btn-danger { background-color: #da373c; color: white; }
         .btn-success { background-color: #248046; color: white; }
+        
+        /* 우측 상단 고정 로그아웃 배지 (상시 표시) */
         .user-badge {
             position: fixed; top: 15px; right: 15px; background: var(--card-bg); border: 1px solid var(--border);
             padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 2000; cursor: pointer; color: #dbdee1;
         }
         .user-badge:hover { background: #35373c; border-color: #f23f43; color: #f23f43; }
+
         .menu-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
         .menu-card {
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px;
@@ -62,6 +65,7 @@
         .menu-card:hover { transform: translateY(-3px); background: #35373c; border-color: var(--primary); }
         .menu-card h2 { font-size: 1.1rem; color: #f2f3f5; margin-bottom: 6px; }
         .menu-card p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+        
         .roster-manage-btn {
             background: #35373c; border: 1px solid #4e5058; color: #dbdee1; width: 100%; padding: 12px;
             border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
@@ -88,7 +92,7 @@
         .seat-card.front-required { background-color: var(--front-seat-bg); border-color: var(--front-seat-border); }
         .seat-card .name { font-size: 0.8rem; font-weight: 700; color: #f2f3f5; }
         .export-group { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: 2000; justify-content: center; align-items: center; padding: 10px; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(3px); z-index: 2500; justify-content: center; align-items: center; padding: 10px; }
         .modal-content { background: var(--card-bg); border-radius: 16px; width: 100%; max-width: 480px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); overflow: hidden; border: 1px solid var(--border); color: #dbdee1; }
         .modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #313338; }
         .modal-header h2 { font-size: 1rem; font-weight: 700; color: #f2f3f5; }
@@ -98,31 +102,40 @@
         .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: #313338; }
         .student-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
         .student-item { display: flex; align-items: center; gap: 8px; }
-        .student-item label { margin: 0; white-space: nowrap; font-size: 0.75rem; display: flex; align-items: center; gap: 3px; cursor: pointer; color: #b5bac1; }
+        
         .group-result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 12px; }
         .group-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
         .group-box h3 { font-size: 0.95rem; color: var(--primary); margin-bottom: 6px; border-bottom: 2px solid var(--border); padding-bottom: 3px; }
         .group-member { font-size: 0.85rem; padding: 3px 0; color: #dbdee1; }
+        
         .notice-card { background: #1e1f22; border-left: 4px solid var(--primary); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 10px; text-align: left; }
-        .notice-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .notice-header { display: flex; justify-content: space-between; align-items: center; }
         .notice-title { font-weight: 700; color: #f2f3f5; font-size: 0.95rem; }
+        .notice-right { display: flex; align-items: center; gap: 8px; }
         .notice-badge { background: var(--primary); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+        .delete-btn-small { background: #da373c; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
+        .delete-btn-small:hover { background: #b82c30; }
         .notice-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 0.9rem; color: #dbdee1; word-break: break-all; }
         .notice-body.show { display: block; }
+
         .board-post-row { display: flex; gap: 12px; align-items: flex-start; background: #1e1f22; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; text-align: left; }
         .board-avatar { width: 38px; height: 38px; border-radius: 50%; background-color: #248046; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
-        .board-content-area { flex: 1; cursor: pointer; }
-        .board-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+        .board-content-wrapper { flex: 1; }
+        .board-content-area { cursor: pointer; }
+        .board-meta { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+        .board-meta-left { display: flex; align-items: baseline; gap: 8px; }
         .board-author { font-weight: 600; color: #f2f3f5; font-size: 0.95rem; }
         .board-time { font-size: 0.75rem; color: var(--text-muted); }
         .board-title-text { font-weight: 700; color: #dbdee1; font-size: 0.95rem; margin-bottom: 4px; }
         .board-body-text { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); font-size: 0.9rem; color: #b5bac1; word-break: break-all; }
         .board-body-text.show { display: block; }
         .post-media { margin-top: 8px; max-width: 100%; border-radius: 6px; }
+
         .discord-chat-container { display: flex; flex-direction: column; height: 480px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
         .discord-chat-header { padding: 14px 18px; background: #2b2d31; border-bottom: 1px solid var(--border); font-weight: 700; color: #f2f3f5; font-size: 0.95rem; }
         .discord-messages-area { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .discord-msg-row { display: flex; gap: 12px; align-items: flex-start; }
+        .discord-msg-row { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
+        .discord-msg-left { display: flex; gap: 12px; align-items: flex-start; flex: 1; }
         .discord-avatar-circle { width: 38px; height: 38px; border-radius: 50%; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
         .discord-msg-body { flex: 1; }
         .discord-msg-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3px; }
@@ -137,10 +150,12 @@
 </head>
 <body>
 
+<!-- 우측 상단 고정 로그아웃 배지 (상시 표시) -->
 <div id="userBadge" class="user-badge" style="display: none;" onclick="logout()" title="클릭시 로그아웃">
     👤 <span id="userNameDisplay">사용자</span> 🚪 <span style="font-size:0.75rem; color:#f23f43;">로그아웃</span>
 </div>
 
+<!-- 1. 로그인 화면 -->
 <div id="loginPage" class="page-view active">
     <div class="auth-container">
         <h1 id="loginTitleText">🔐 로그인</h1>
@@ -154,15 +169,16 @@
             <input type="password" id="loginPw" placeholder="비밀번호 입력">
         </div>
         <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
-            <input type="checkbox" id="rememberLogin" style="width: auto;">
+            <input type="checkbox" id="rememberLogin" checked style="width: auto;">
             <label for="rememberLogin" style="margin: 0; cursor: pointer;">로그인 유지</label>
         </div>
         <button class="btn btn-primary" onclick="handleLogin()">로그인</button>
         <button class="btn btn-secondary" onclick="openAdminModal()" style="margin-top: 10px;">관리자 로그인</button>
-        <button class="btn btn-secondary" onclick="runAsGuest()" style="margin-top: 6px;">비로그인 상태로 자리배치 실행하기</button>
+        <button class="btn btn-secondary" onclick="runAsGuest()" style="margin-top: 6px;">비로그인 상태로 시작하기</button>
     </div>
 </div>
 
+<!-- 관리자 로그인 모달 -->
 <div class="modal-overlay" id="adminModal">
     <div class="modal-content" style="max-width: 360px;">
         <div class="modal-header">
@@ -179,6 +195,7 @@
     </div>
 </div>
 
+<!-- 2. 비밀번호 강제 변경 화면 -->
 <div id="pwChangePage" class="page-view">
     <div class="auth-container">
         <h1>🔑 비밀번호 변경</h1>
@@ -191,6 +208,19 @@
     </div>
 </div>
 
+<!-- 3. 비로그인 전용 대시보드 화면 -->
+<div id="guestDashboardPage" class="page-view">
+    <div class="auth-container" style="max-width: 480px;">
+        <h1>🚪 비로그인 전용 모드</h1>
+        <p>원하시는 학급 도구를 선택해주세요.</p>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+            <button class="btn btn-primary" style="padding: 16px; font-size: 1rem;" onclick="switchPage('seatPage')">🎯 자리 배치 시스템</button>
+            <button class="btn btn-secondary" style="padding: 16px; font-size: 1rem;" onclick="switchPage('groupPage')">👥 무작위 모둠 편성</button>
+        </div>
+    </div>
+</div>
+
+<!-- 4. 정식 로비 화면 (대시보드) -->
 <div id="dashboardPage" class="page-view">
     <div class="dashboard-container">
         <h1 id="dashboardTitleText">🏫 스마트 학급 관리 시스템</h1>
@@ -228,11 +258,12 @@
     </div>
 </div>
 
+<!-- 5. 자리 배치 시스템 화면 -->
 <div id="seatPage" class="page-view">
     <div class="sub-nav">
         <button class="back-btn" onclick="goBackFromSeat()">← 돌아가기</button>
         <h2 style="font-size: 1.1rem; color:#f2f3f5; margin: 0;">🎯 자리 배치 시스템</h2>
-        <button class="back-btn" onclick="openModal()">📝 명단 수정</button>
+        <button class="back-btn" onclick="openModal()">📝 명단 및 앞자리 설정</button>
     </div>
 
     <div class="container">
@@ -244,7 +275,7 @@
                 <input type="number" id="totalCols" value="6" min="1" max="10" onchange="initLayoutFromInput()">
             </div>
             <button class="btn btn-primary" onclick="shuffleSeats()">🔀 조건 반영 자리배치</button>
-            <button class="btn btn-danger" onclick="resetAll()">🔄 자리 초기화</button>
+            <button class="btn btn-danger" onclick="resetAll()" style="margin-top:10px;">🔄 자리 초기화</button>
             <div class="export-group">
                 <button class="btn btn-secondary" onclick="exportPDF()" style="flex:1;">PDF 다운</button>
                 <button class="btn btn-success" onclick="exportWord()" style="flex:1;">Word 다운</button>
@@ -260,9 +291,10 @@
     </div>
 </div>
 
+<!-- 6. 무작위 모둠 편성 화면 -->
 <div id="groupPage" class="page-view">
     <div class="sub-nav">
-        <button class="back-btn" onclick="switchPage('dashboardPage')">← 로비로</button>
+        <button class="back-btn" onclick="goBackFromSeat()">← 돌아가기</button>
         <h2 style="font-size: 1.1rem; color:#f2f3f5; margin:0;">👥 무작위 모둠 편성</h2>
         <div></div>
     </div>
@@ -270,9 +302,10 @@
         <div class="panel">
             <div class="status-box" id="groupStatusBox" style="margin-bottom: 12px;">등록된 학생: <b>0명</b></div>
             <div class="form-group">
-                <label>모둠당 인원수</label>
-                <input type="number" id="groupSizeInput" value="4" min="2" max="10">
+                <label>모둠당 인원수 설정</label>
+                <input type="number" id="groupSizeInput" value="4" min="2" max="10" oninput="updateGroupPreview()" onchange="updateGroupPreview()">
             </div>
+            <div id="groupCalcPreview" style="font-size: 0.8rem; color: #b5bac1; margin-bottom: 12px; line-height: 1.4;"></div>
             <button class="btn btn-primary" onclick="generateGroups()">🎲 모둠 무작위 섞기</button>
         </div>
         <div class="panel">
@@ -281,6 +314,7 @@
     </div>
 </div>
 
+<!-- 7. 학급 공지사항 화면 -->
 <div id="noticePage" class="page-view">
     <div class="sub-nav">
         <button class="back-btn" onclick="switchPage('dashboardPage')">← 로비로</button>
@@ -301,6 +335,7 @@
     </div>
 </div>
 
+<!-- 8. 자유 게시판 화면 -->
 <div id="boardPage" class="page-view">
     <div class="sub-nav">
         <button class="back-btn" onclick="switchPage('dashboardPage')">← 로비로</button>
@@ -315,6 +350,7 @@
     </div>
 </div>
 
+<!-- 자유 게시판 글쓰기 모달 창 -->
 <div class="modal-overlay" id="boardModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -332,6 +368,7 @@
     </div>
 </div>
 
+<!-- 9. 실시간 소통방 화면 -->
 <div id="chatPage" class="page-view">
     <div class="sub-nav">
         <button class="back-btn" onclick="switchPage('dashboardPage')">← 로비로</button>
@@ -350,10 +387,11 @@
     </div>
 </div>
 
+<!-- 학생 명단 및 앞자리 설정 모달 창 -->
 <div class="modal-overlay" id="studentModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>📝 학생 명단 입력</h2>
+            <h2>📝 학생 명단 및 앞자리 설정</h2>
             <button class="close-btn" onclick="closeModal()">✕</button>
         </div>
         <div class="modal-body">
@@ -367,9 +405,10 @@
     </div>
 </div>
 
+<!-- Firebase 연동 및 삭제 기능 스크립트 -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const CONFIG = {
         className: "1학년 10반",
@@ -401,14 +440,30 @@
         alert("공지가 등록되었습니다.");
     };
 
+    window.deleteNotice = function(key) {
+        if(confirm("정말 이 공지사항을 삭제하시겠습니까?")) {
+            remove(ref(db, 'notices/' + key)).then(() => alert("삭제되었습니다."));
+        }
+    };
+
     onValue(ref(db, 'notices'), (snapshot) => {
         const container = document.getElementById('noticeListArea');
         if(!container) return;
         const data = snapshot.val();
         if(!data) { container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">등록된 공지가 없습니다.</div>`; return; }
-        container.innerHTML = Object.values(data).reverse().map(n => `
+        
+        const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
+        const isAdmin = currentUserObj && currentUserObj.id === '관리자';
+
+        container.innerHTML = Object.entries(data).reverse().map(([key, n]) => `
             <div class="notice-card">
-                <div class="notice-header" onclick="toggleNotice(this)"><span class="notice-title">📌 ${n.title}</span><span class="notice-badge">공지</span></div>
+                <div class="notice-header">
+                    <span class="notice-title" onclick="toggleNotice(this)" style="flex:1; cursor:pointer;">📌 ${n.title}</span>
+                    <div class="notice-right">
+                        <span class="notice-badge" onclick="toggleNotice(this)" style="cursor:pointer;">공지</span>
+                        ${isAdmin ? `<button class="delete-btn-small" onclick="deleteNotice('${key}')">삭제</button>` : ''}
+                    </div>
+                </div>
                 <div class="notice-body"><p style="white-space: pre-wrap;">${n.content}</p></div>
             </div>
         `).join('');
@@ -440,14 +495,34 @@
         alert("게시글이 등록되었습니다.");
     }
 
+    window.deleteBoardPost = function(key, author) {
+        const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
+        const isAdmin = currentUserObj && currentUserObj.id === '관리자';
+        const isAuthor = currentUserObj && currentUserObj.name === author;
+
+        if(isAdmin || isAuthor) {
+            if(confirm("정말 이 게시글을 삭제하시겠습니까?")) {
+                remove(ref(db, 'boardPosts/' + key)).then(() => alert("삭제되었습니다."));
+            }
+        } else {
+            alert("삭제 권한이 없습니다.");
+        }
+    };
+
     onValue(ref(db, 'boardPosts'), (snapshot) => {
         const container = document.getElementById('boardListArea');
         if(!container) return;
         const data = snapshot.val();
         if(!data) { container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">작성된 게시글이 없습니다.</div>`; return; }
-        container.innerHTML = Object.values(data).reverse().map(p => {
+        
+        const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
+        const isAdmin = currentUserObj && currentUserObj.id === '관리자';
+
+        container.innerHTML = Object.entries(data).reverse().map(([key, p]) => {
             const timeStr = new Date(p.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const initial = p.author ? p.author.charAt(0) : '?';
+            const canDelete = isAdmin || (currentUserObj && currentUserObj.name === p.author);
+
             let mediaHtml = '';
             if(p.fileData) {
                 if(p.fileType && p.fileType.startsWith('image/')) mediaHtml = `<img src="${p.fileData}" class="post-media" alt="첨부 이미지">`;
@@ -457,10 +532,18 @@
             return `
                 <div class="board-post-row">
                     <div class="board-avatar">${initial}</div>
-                    <div class="board-content-area" onclick="toggleBoard(this)">
-                        <div class="board-meta"><span class="board-author">${p.author}</span><span class="board-time">${timeStr}</span></div>
-                        <div class="board-title-text">${p.title}</div>
-                        <div class="board-body-text"><p style="white-space: pre-wrap; margin-bottom: 8px;">${p.content}</p>${mediaHtml}</div>
+                    <div class="board-content-wrapper">
+                        <div class="board-meta">
+                            <div class="board-meta-left">
+                                <span class="board-author">${p.author}</span>
+                                <span class="board-time">${timeStr}</span>
+                            </div>
+                            ${canDelete ? `<button class="delete-btn-small" onclick="deleteBoardPost('${key}', '${p.author}')">삭제</button>` : ''}
+                        </div>
+                        <div class="board-content-area" onclick="toggleBoard(this)">
+                            <div class="board-title-text">${p.title}</div>
+                            <div class="board-body-text"><p style="white-space: pre-wrap; margin-bottom: 8px;">${p.content}</p>${mediaHtml}</div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -476,21 +559,34 @@
         document.getElementById('discordChatInput').value = "";
     };
 
+    window.deleteDiscordMessage = function(key) {
+        if(confirm("이 메시지를 삭제하시겠습니까?")) {
+            remove(ref(db, 'discordChatMessages/' + key)).then(() => alert("메시지가 삭제되었습니다."));
+        }
+    };
+
     onValue(ref(db, 'discordChatMessages'), (snapshot) => {
         const container = document.getElementById('discordMessagesArea');
         if(!container) return;
         const data = snapshot.val();
         if(!data) { container.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 20px;">메시지가 없습니다. 첫 대화를 시작해보세요!</div>`; return; }
-        container.innerHTML = Object.values(data).map(msg => {
+        
+        const currentUserObj = window.getCurrentUser ? window.getCurrentUser() : null;
+        const isAdmin = currentUserObj && currentUserObj.id === '관리자';
+
+        container.innerHTML = Object.entries(data).map(([key, msg]) => {
             const timeStr = new Date(msg.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const initial = msg.name ? msg.name.charAt(0) : '?';
             return `
                 <div class="discord-msg-row">
-                    <div class="discord-avatar-circle">${initial}</div>
-                    <div class="discord-msg-body">
-                        <div class="discord-msg-meta"><span class="discord-author-name">${msg.name}</span><span class="discord-timestamp">${timeStr}</span></div>
-                        <div class="discord-text-content">${msg.text}</div>
+                    <div class="discord-msg-left">
+                        <div class="discord-avatar-circle">${initial}</div>
+                        <div class="discord-msg-body">
+                            <div class="discord-msg-meta"><span class="discord-author-name">${msg.name}</span><span class="discord-timestamp">${timeStr}</span></div>
+                            <div class="discord-text-content">${msg.text}</div>
+                        </div>
                     </div>
+                    ${isAdmin ? `<button class="delete-btn-small" onclick="deleteDiscordMessage('${key}')">삭제</button>` : ''}
                 </div>
             `;
         }).join('');
@@ -498,6 +594,7 @@
     });
 </script>
 
+<!-- 메인 로직 스크립트 -->
 <script>
     const CONFIG = window.APP_CONFIG || {
         adminPassword: "rhksflwk1234",
@@ -520,7 +617,10 @@
     let isGuestMode = false;
 
     window.getCurrentUser = function() { return currentUser; };
-    window.toggleNotice = function(header) { header.nextElementSibling.classList.toggle('show'); };
+    window.toggleNotice = function(header) {
+        const body = header.closest('.notice-card').querySelector('.notice-body');
+        if(body) body.classList.toggle('show');
+    };
     window.toggleBoard = function(area) { area.querySelector('.board-body-text').classList.toggle('show'); };
     window.openBoardModal = function() { document.getElementById('boardModal').style.display = 'flex'; };
     window.closeBoardModal = function() { document.getElementById('boardModal').style.display = 'none'; };
@@ -528,20 +628,32 @@
     window.onload = function() {
         const savedPage = localStorage.getItem('currentPage') || 'loginPage';
         const rememberedUser = localStorage.getItem('rememberUser');
+        
         if (rememberedUser === 'guest') {
             isGuestMode = true;
             currentUser = { id: 'guest', name: '비로그인 사용자' };
-            switchPage(savedPage === 'loginPage' ? 'seatPage' : savedPage);
+            document.getElementById('userNameDisplay').innerText = currentUser.name;
+            document.getElementById('userBadge').style.display = 'flex';
+            switchPage(savedPage === 'loginPage' ? 'guestDashboardPage' : savedPage);
         } else if (rememberedUser) {
             currentUser = rememberedUser === '관리자' ? { id: '관리자', name: '관리자' } : registeredStudents.find(s => s.id === rememberedUser);
-            if(currentUser) processLoginSuccessAfterLoad(savedPage);
+            if(currentUser) {
+                document.getElementById('userNameDisplay').innerText = currentUser.name;
+                document.getElementById('userBadge').style.display = 'flex';
+                document.getElementById('adminNoticeWritePanel').style.display = (currentUser.id === '관리자') ? 'block' : 'none';
+                switchPage(savedPage === 'loginPage' ? 'dashboardPage' : savedPage);
+            } else {
+                switchPage('loginPage');
+            }
         } else {
-            switchPage(savedPage);
+            switchPage('loginPage');
         }
+
         document.getElementById('modalStudentCount').value = registeredStudents.length;
         generateModalInputs();
         updateStatus();
         updateLobbyStatus();
+        updateGroupPreview();
         renderSeats();
     };
 
@@ -549,7 +661,7 @@
         document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         localStorage.setItem('currentPage', pageId);
-        if(pageId === 'groupPage') updateGroupStatus();
+        if(pageId === 'groupPage') { updateGroupStatus(); updateGroupPreview(); }
         else if(pageId === 'seatPage') { updateStatus(); renderSeats(); }
     }
 
@@ -559,17 +671,12 @@
         localStorage.setItem('rememberUser', 'guest');
         document.getElementById('userNameDisplay').innerText = currentUser.name;
         document.getElementById('userBadge').style.display = 'flex';
-        switchPage('seatPage');
+        switchPage('guestDashboardPage');
     }
 
     function goBackFromSeat() {
         if(isGuestMode) {
-            if(confirm("로그인 화면으로 돌아가시겠습니까?")) {
-                localStorage.removeItem('rememberUser');
-                isGuestMode = false; currentUser = null;
-                document.getElementById('userBadge').style.display = 'none';
-                switchPage('loginPage');
-            }
+            switchPage('guestDashboardPage');
         } else {
             switchPage('dashboardPage');
         }
@@ -620,25 +727,23 @@
     function processLoginSuccess(remember) {
         document.getElementById('userNameDisplay').innerText = currentUser.name;
         document.getElementById('userBadge').style.display = 'flex';
-        if(remember) localStorage.setItem('rememberUser', currentUser.id);
-        else localStorage.removeItem('rememberUser');
+        
+        if(remember) {
+            localStorage.setItem('rememberUser', currentUser.id);
+        } else {
+            localStorage.removeItem('rememberUser');
+        }
 
         document.getElementById('adminNoticeWritePanel').style.display = (currentUser.id === '관리자') ? 'block' : 'none';
         switchPage('dashboardPage');
     }
 
-    function processLoginSuccessAfterLoad(savedPage) {
-        document.getElementById('userNameDisplay').innerText = currentUser.name;
-        document.getElementById('userBadge').style.display = 'flex';
-        document.getElementById('adminNoticeWritePanel').style.display = (currentUser.id === '관리자') ? 'block' : 'none';
-        switchPage(savedPage === 'loginPage' ? 'dashboardPage' : savedPage);
-    }
-
-    function logout() {
+    window.logout = function() {
         if(confirm("로그아웃 하시겠습니까?")) {
             localStorage.removeItem('rememberUser');
             localStorage.removeItem('currentPage');
-            currentUser = null; isGuestMode = false;
+            currentUser = null; 
+            isGuestMode = false;
             document.getElementById('userBadge').style.display = 'none';
             document.getElementById('loginId').value = "";
             document.getElementById('loginPw').value = "";
@@ -700,6 +805,7 @@
         closeModal();
         updateStatus();
         updateLobbyStatus();
+        updateGroupPreview();
         renderSeats();
     }
 
@@ -716,6 +822,22 @@
 
     function updateLobbyStatus() { document.getElementById('lobbyStatus').innerHTML = `등록된 학생: <b>${registeredStudents.length}명</b>`; }
     function updateGroupStatus() { document.getElementById('groupStatusBox').innerHTML = `등록된 학생: <b>${registeredStudents.length}명</b>`; }
+
+    function updateGroupPreview() {
+        const totalCount = registeredStudents.length;
+        const size = parseInt(document.getElementById('groupSizeInput').value) || 4;
+        if(totalCount === 0) {
+            document.getElementById('groupCalcPreview').innerHTML = `등록된 학생이 없습니다.`;
+            return;
+        }
+        const totalGroups = Math.ceil(totalCount / size);
+        const remainder = totalCount % size;
+        let text = `총 <b>${totalCount}명</b> 중 <b>${totalGroups}개 모둠</b> 편성`;
+        if(remainder > 0) {
+            text += `<br>(일부 모둠에 잔여 인원 ${remainder}명 배분)`;
+        }
+        document.getElementById('groupCalcPreview').innerHTML = text;
+    }
 
     function initLayoutFromInput() {
         const totalCols = parseInt(document.getElementById('totalCols').value) || 1;
